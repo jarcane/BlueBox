@@ -10,11 +10,13 @@ import libtcodpy as libtcod
 
 class BlueBox:
     # the BlueBox instance object
-    def __init__(self, win_name='BlueBox', boot_msg=True,
-                 width=40, height=24, fps=48, foreground=libtcod.green, background=libtcod.black):
+    def __init__(self, win_name='BlueBox', boot_msg=True, graphics_layer=False, img=None,
+                 width=40, height=24, fps=48, foreground=libtcod.light_blue, background=libtcod.lightest_sea):
         # declare initial graphics colors and resolution (40 or 80 column modes)
         self.win_name = win_name
         self.boot_msg = boot_msg
+        self.graphics_layer = graphics_layer
+        self.img = img
         self.width = width
         self.height = height
         self.fps = fps
@@ -26,7 +28,8 @@ class BlueBox:
             libtcod.console_set_custom_font('bluebox80.png',
                                             libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_ASCII_INROW)
         else:
-            libtcod.console_set_custom_font('bluebox.png', libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_ASCII_INROW)
+            libtcod.console_set_custom_font('bluebox.png',
+                                            libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_ASCII_INROW)
         libtcod.console_init_root(self.width, self.height, self.win_name, False)
         libtcod.sys_set_fps(self.fps)
         self.con = libtcod.console_new(self.width, self.height)
@@ -41,6 +44,11 @@ class BlueBox:
 
         # create an array containing the screen contents
         self.screen = [[' ' for y in range(self.height)] for x in range(self.width)]
+
+        # if graphics layer is enabled, initialize it.
+        if graphics_layer:
+            self.img = libtcod.image_new(self.width * 2, self.height * 2)
+            libtcod.image_clear(self.img, self.background)
 
         # Display the default boot message, disable with boot_msg=False
         if boot_msg:
@@ -60,27 +68,52 @@ class BlueBox:
             libtcod.console_set_custom_font('bluebox.png',
                                             libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_ASCII_INROW)
         libtcod.console_init_root(self.width, self.height, self.win_name, False)
-        
+
         # reinitialize self.screen
         self.screen = [[' ' for y in range(self.height)] for x in range(self.width)]
         self.clear_screen()
 
+    def clear_graphics(self):
+        # wipes the current graphics layer
+        if self.img is not None:
+            libtcod.image_clear(self.img, self.background)
+
     def clear_screen(self):
-        # wipes the screen buffer and resets the cursor back to 0,0
+        # wipes the screen buffer and graphics layer, resets the cursor back to 0,0
         for x in range(self.width):
             for y in range(self.height):
                 self.screen[x][y] = ' '
+        self.clear_graphics()
         self.cursor.x = 0
         self.cursor.y = 0
         self.display_screen()
 
     def display_screen(self):
-        # display current screen contents
+        # display current screen contents, including graphics layer if active
+        if self.graphics_layer and self.img is not None:
+            libtcod.image_blit_2x(self.img, self.con, 0, 0)
         for x in range(self.width):
             for y in range(self.height):
                 libtcod.console_put_char(self.con, x, y, self.screen[x][y])
+
         libtcod.console_blit(self.con, 0, 0, self.width, self.height, 0, 0, 0)
         libtcod.console_flush()
+
+    def draw_point(self, x, y, color=None):
+        # draw a pixel to the screen's semigraphics layer
+        # fails silently if there is currently no graphics layer
+        if color is None:
+            color = self.foreground
+
+        if self.graphics_layer and self.img is not None:
+            libtcod.image_put_pixel(self.img, x, y, color)
+            return
+
+    def initialize_graphics(self):
+        # if the graphics layer hasn't been initialized, start it
+        self.graphics_layer = True
+        self.img = libtcod.image_new(self.width * 2, self.height * 2)
+        libtcod.image_clear(self.img, self.background)
 
     def text_out(self, text, newline=True):
         # prints the received text to the console, wrapping if needed, and scrolling the screen up if needed
