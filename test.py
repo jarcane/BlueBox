@@ -9,11 +9,13 @@ box.text_out('Do you want to eat cake? ', newline=False)
 
 text = box.text_in(newline=False, prompt=False)
 
-box.initialize_graphics()
+box.set_graphics()
 
-for x in range(160):
-    for y in range(48):
-        box.draw_point(x, y, libtcod.chartreuse)
+box.draw_point(60, 24, libtcod.chartreuse)
+
+box.display_screen()
+
+box.set_graphics(flag=False)
 
 box.text_out('some graphics and ' + text)
 

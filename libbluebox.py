@@ -11,7 +11,7 @@ import libtcodpy as libtcod
 class BlueBox:
     # the BlueBox instance object
     def __init__(self, win_name='BlueBox', boot_msg=True, graphics_layer=False, img=None,
-                 width=40, height=24, fps=48, foreground=libtcod.light_blue, background=libtcod.lightest_sea):
+                 width=40, height=24, fps=48, foreground=libtcod.green, background=libtcod.black):
         # declare initial graphics colors and resolution (40 or 80 column modes)
         self.win_name = win_name
         self.boot_msg = boot_msg
@@ -90,13 +90,14 @@ class BlueBox:
 
     def display_screen(self):
         # display current screen contents, including graphics layer if active
-        if self.graphics_layer and self.img is not None:
-            libtcod.image_blit_2x(self.img, self.con, 0, 0)
         for x in range(self.width):
             for y in range(self.height):
-                libtcod.console_put_char(self.con, x, y, self.screen[x][y])
+                libtcod.console_put_char(self.con, x, y, self.screen[x][y], flag=libtcod.BKGND_NONE)
 
         libtcod.console_blit(self.con, 0, 0, self.width, self.height, 0, 0, 0)
+        if self.graphics_layer and self.img is not None:
+            libtcod.image_set_key_color(self.img, self.background)
+            libtcod.image_blit_2x(self.img, 0, 0, 0)
         libtcod.console_flush()
 
     def draw_point(self, x, y, color=None):
@@ -109,11 +110,12 @@ class BlueBox:
             libtcod.image_put_pixel(self.img, x, y, color)
             return
 
-    def initialize_graphics(self):
+    def set_graphics(self, flag=True):
         # if the graphics layer hasn't been initialized, start it
-        self.graphics_layer = True
-        self.img = libtcod.image_new(self.width * 2, self.height * 2)
-        libtcod.image_clear(self.img, self.background)
+        self.graphics_layer = flag
+        if self.graphics_layer:
+            self.img = libtcod.image_new(self.width * 2, self.height * 2)
+            libtcod.image_clear(self.img, self.background)
 
     def text_out(self, text, newline=True):
         # prints the received text to the console, wrapping if needed, and scrolling the screen up if needed
