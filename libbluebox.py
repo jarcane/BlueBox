@@ -10,10 +10,11 @@ import libtcodpy as libtcod
 
 class BlueBox:
     # the BlueBox instance object
-    def __init__(self, winname='BlueBox', width=40, height=24,
-                 fps=48, foreground=libtcod.green, background=libtcod.black):
+    def __init__(self, win_name='BlueBox', boot_msg=True,
+                 width=40, height=24, fps=48, foreground=libtcod.green, background=libtcod.black):
         # declare initial graphics colors and resolution (40 or 80 column modes)
-        self.winname = winname
+        self.win_name = win_name
+        self.boot_msg = boot_msg
         self.width = width
         self.height = height
         self.fps = fps
@@ -22,7 +23,7 @@ class BlueBox:
 
         # initialize libtcod console and store to self.con
         libtcod.console_set_custom_font('bluebox.png', libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_ASCII_INROW)
-        libtcod.console_init_root(self.width, self.height, winname, False)
+        libtcod.console_init_root(self.width, self.height, self.win_name, False)
         libtcod.sys_set_fps(self.fps)
         self.con = libtcod.console_new(self.width, self.height)
 
@@ -36,6 +37,29 @@ class BlueBox:
 
         # create an array containing the screen contents
         self.screen = [[' ' for y in range(self.height)] for x in range(self.width)]
+
+        # Display the default boot message, disable with boot_msg=False
+        if boot_msg:
+            self.text_out('BUTTECH CAI-1')
+            self.text_out('PRODUCED UNDER CONTRACT FOR THE BUTTE   COUNTY BOARD OF EDUCATION')
+            self.text_out('')
+
+    def clear_screen(self):
+        # wipes the screen buffer and resets the cursor back to 0,0
+        for x in range(self.width):
+            for y in range(self.height):
+                self.screen[x][y] = ' '
+        self.cursor.x = 0
+        self.cursor.y = 0
+        self.display_screen()
+
+    def display_screen(self):
+        # display current screen contents
+        for x in range(self.width):
+            for y in range(self.height):
+                libtcod.console_put_char(self.con, x, y, self.screen[x][y])
+        libtcod.console_blit(self.con, 0, 0, self.width, self.height, 0, 0, 0)
+        libtcod.console_flush()
 
     def text_out(self, text, newline=True):
         # prints the received text to the console, wrapping if needed, and scrolling the screen up if needed
@@ -159,14 +183,6 @@ class BlueBox:
                 del self.screen[x][0]
                 self.screen[x].append(' ')
             self.cursor.y -= 1
-
-    def display_screen(self):
-        # display current screen contents
-        for x in range(self.width):
-            for y in range(self.height):
-                libtcod.console_put_char(self.con, x, y, self.screen[x][y])
-        libtcod.console_blit(self.con, 0, 0, self.width, self.height, 0, 0, 0)
-        libtcod.console_flush()
 
 
 class Cursor:
