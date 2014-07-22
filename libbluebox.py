@@ -58,7 +58,7 @@ class BlueBox:
         if newline is True:
             self.new_line()
 
-    def text_in(self, newline=True, prompt=False, prompt_text='> '):
+    def text_in(self, newline=False, prompt=False, prompt_text='> '):
         # takes input from the console, displaying as the user types.
         # the additional arguments are as follows:
         # newline: If true, moves the cursor to a new line before beginning input
@@ -72,12 +72,11 @@ class BlueBox:
         timer = 0
         text = ""
         first_line = True
+        line_count = 0
 
         # set a leftward margin for the first line of input, so the user can't backspace over the prompt
-        if prompt:
-            left_margin = len(prompt_text)
-        else:
-            left_margin = 0
+        left_margin = self.cursor.x
+        original_margin = left_margin
 
         while not libtcod.console_is_window_closed():
             # loop while we wait for the user to type something.
@@ -112,6 +111,14 @@ class BlueBox:
                     self.cursor.y -= 1
                     self.cursor.x = self.width - 1
                     text = text[:-1]
+                    line_count -= 1
+
+                    # if the line_count has been reduced back to the first line, reset first line and margin
+                    if line_count <= 0:
+                        # keep track of number of lines entered, and if back to the first line, reset the flag
+                        line_count = 0
+                        first_line = True
+                        left_margin = original_margin
             elif key.vk == libtcod.KEY_ENTER:
                 # insert a new_line and break to the return
                 self.new_line()
