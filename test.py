@@ -10,4 +10,8 @@ x = box.text_in(newline=False, prompt=False)
 
 box.text_out(x)
 
+box.change_resolution(80)
 
+box.text_out('New resolution ' + x)
+
+box.text_in(prompt=True)

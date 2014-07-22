@@ -22,14 +22,18 @@ class BlueBox:
         self.background = background
 
         # initialize libtcod console and store to self.con
-        libtcod.console_set_custom_font('bluebox.png', libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_ASCII_INROW)
+        if width == 80:
+            libtcod.console_set_custom_font('bluebox80.png',
+                                            libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_ASCII_INROW)
+        else:
+            libtcod.console_set_custom_font('bluebox.png', libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_ASCII_INROW)
         libtcod.console_init_root(self.width, self.height, self.win_name, False)
         libtcod.sys_set_fps(self.fps)
         self.con = libtcod.console_new(self.width, self.height)
 
         # set console colors and alignment
-        libtcod.console_set_default_foreground(self.con, foreground)
-        libtcod.console_set_default_background(self.con, background)
+        libtcod.console_set_default_foreground(self.con, self.foreground)
+        libtcod.console_set_default_background(self.con, self.background)
         libtcod.console_set_alignment(self.con, libtcod.LEFT)
 
         # create the cursor
@@ -40,9 +44,26 @@ class BlueBox:
 
         # Display the default boot message, disable with boot_msg=False
         if boot_msg:
-            self.text_out('BUTTECH CAI-1')
-            self.text_out('PRODUCED UNDER CONTRACT FOR THE BUTTE   COUNTY BOARD OF EDUCATION')
+            self.text_out('BUTTECH CAI-1 (C) 1987')
+            self.text_out('PRODUCED UNDER CONTRACT FOR THE BUTTE')
+            self.text_out('COUNTY BOARD OF EDUCATION')
             self.text_out('')
+
+    def change_resolution(self, target_width, target_height=24):
+        # wipes the screen and changes the text mode to the target
+        self.width = target_width
+        self.height = target_height
+        if self.width == 80:
+            libtcod.console_set_custom_font('bluebox80.png',
+                                            libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_ASCII_INROW)
+        else:
+            libtcod.console_set_custom_font('bluebox.png',
+                                            libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_ASCII_INROW)
+        libtcod.console_init_root(self.width, self.height, self.win_name, False)
+        
+        # reinitialize self.screen
+        self.screen = [[' ' for y in range(self.height)] for x in range(self.width)]
+        self.clear_screen()
 
     def clear_screen(self):
         # wipes the screen buffer and resets the cursor back to 0,0
