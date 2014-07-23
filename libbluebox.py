@@ -7,8 +7,11 @@ This file contains the basic class object BlueBox and its subroutines.
 
 import libtcodpy as libtcod
 
+# the standard "colors" for the Blue Box monochrome
+# The monochrome display accepts 4 intensity levels,
+# though the bold setting was prone to inducing screen burn-in
 color_off = libtcod.black
-color_half = libtcod.darkest_green
+color_half = libtcod.darker_green
 color_on = libtcod.dark_green
 color_bold = libtcod.green
 

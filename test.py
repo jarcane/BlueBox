@@ -11,6 +11,8 @@ text = box.text_in(newline=False, prompt=False)
 box.set_graphics()
 
 box.draw_point(60, 24, bluebox.color_bold)
+box.draw_point(62, 24, bluebox.color_half)
+box.draw_point(64, 24, bluebox.color_on)
 
 box.display_screen()
 
