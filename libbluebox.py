@@ -10,20 +10,22 @@ import libtcodpy as libtcod
 # the standard "colors" for the Blue Box monochrome
 # The monochrome display accepts 4 intensity levels,
 # though the bold setting was prone to inducing screen burn-in
-color_off = libtcod.black
-color_half = libtcod.darker_green
-color_on = libtcod.dark_green
-color_bold = libtcod.green
+on_color = libtcod.lightest_azure
+off_color = libtcod.black
+color_off = libtcod.color_lerp(off_color, on_color, 0.0)
+color_half = libtcod.color_lerp(off_color, on_color, 0.5)
+color_on = libtcod.color_lerp(off_color, on_color, 0.75)
+color_bold = libtcod.color_lerp(off_color, on_color, 1.0)
 
 
 class BlueBox:
     # the BlueBox instance object
-    def __init__(self, win_name='BlueBox', boot_msg=True, graphics_layer=False, img=None,
+    def __init__(self, win_name='BlueBox', boot_msg=True, graphics_mode=False, img=None,
                  width=40, height=24, fps=48, foreground=color_on, background=color_off):
         # declare initial graphics colors and resolution (40 or 80 column modes)
         self.win_name = win_name
         self.boot_msg = boot_msg
-        self.graphics_layer = graphics_layer
+        self.graphics_mode = graphics_mode
         self.img = img
         self.width = width
         self.height = height
@@ -32,7 +34,7 @@ class BlueBox:
         self.background = background
 
         # initialize libtcod console and store to self.con
-        if width == 80:
+        if width >= 80:
             libtcod.console_set_custom_font('bluebox80.png',
                                             libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_ASCII_INROW)
         else:
@@ -54,7 +56,7 @@ class BlueBox:
         self.screen = [[' ' for y in range(self.height)] for x in range(self.width)]
 
         # if graphics layer is enabled, initialize it.
-        if graphics_layer:
+        if graphics_mode:
             self.img = libtcod.image_new(self.width * 2, self.height * 2)
             libtcod.image_clear(self.img, self.background)
 
@@ -103,10 +105,19 @@ class BlueBox:
                 libtcod.console_put_char_ex(self.con, x, y, self.screen[x][y], self.foreground, self.background)
 
         libtcod.console_blit(self.con, 0, 0, self.width, self.height, 0, 0, 0)
-        if self.graphics_layer and self.img is not None:
+        if self.graphics_mode and self.img is not None:
             libtcod.image_set_key_color(self.img, self.background)
             libtcod.image_blit_2x(self.img, 0, 0, 0)
         libtcod.console_flush()
+
+    def draw_line(self, sx, sy, tx, ty, color=None):
+        # draw a line between starting point sx, sy and target point tx, ty
+        if color is None:
+            color = self.foreground
+
+        points = libtcod.line_iter(sx, sy, tx, ty)
+        for x, y in points:
+            self.draw_point(x, y, color)
 
     def draw_point(self, x, y, color=None):
         # draw a pixel to the screen's semigraphics layer
@@ -114,14 +125,14 @@ class BlueBox:
         if color is None:
             color = self.foreground
 
-        if self.graphics_layer and self.img is not None:
+        if self.graphics_mode and self.img is not None:
             libtcod.image_put_pixel(self.img, x, y, color)
             return
 
     def set_graphics(self, flag=True):
         # if the graphics layer hasn't been initialized, start it
-        self.graphics_layer = flag
-        if self.graphics_layer:
+        self.graphics_mode = flag
+        if self.graphics_mode:
             self.img = libtcod.image_new(self.width * 2, self.height * 2)
             libtcod.image_clear(self.img, self.background)
 
