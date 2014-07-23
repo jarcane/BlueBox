@@ -15,6 +15,7 @@ box.draw_point(62, 24, bluebox.color_half)
 box.draw_point(64, 24, bluebox.color_on)
 
 box.draw_line(0, 0, 50, 30)
+box.draw_line(0, 0, 30, 50)
 
 box.display_screen()
 
@@ -22,6 +23,6 @@ box.text_in()
 
 box.set_graphics(flag=False)
 
-box.text_out('some graphics and ' + text)
+box.text_out('output: ' + text)
 
 box.text_in(prompt=True)
