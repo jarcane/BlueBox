@@ -129,8 +129,12 @@ class BlueBox:
             libtcod.image_put_pixel(self.img, x, y, color)
             return
 
-    def set_graphics(self, flag=True):
+    def set_graphics(self, flag=None):
         # if the graphics layer hasn't been initialized, start it
+        # if called with no arguments, switches the state of graphics mode
+        # otherwise, switches to the designated state (True for on, False for off)
+        if flag is None:
+            flag = not self.graphics_mode
         self.graphics_mode = flag
         if self.graphics_mode:
             self.img = libtcod.image_new(self.width * 2, self.height * 2)
@@ -219,7 +223,8 @@ class BlueBox:
                         first_line = True
                         left_margin = original_margin
             elif key.vk == libtcod.KEY_ENTER:
-                # insert a new_line and break to the return
+                # blank the cursor, insert a new_line and break to the return
+                self.screen[self.cursor.x][self.cursor.y] = ' '
                 self.new_line()
                 break
             elif key.vk == libtcod.KEY_ESCAPE:
