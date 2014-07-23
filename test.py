@@ -1,7 +1,6 @@
 __author__ = 'BearBear'
 
 import libbluebox as bluebox
-import libtcodpy as libtcod
 
 box = bluebox.BlueBox(width=80)
 
@@ -11,7 +10,7 @@ text = box.text_in(newline=False, prompt=False)
 
 box.set_graphics()
 
-box.draw_point(60, 24, libtcod.chartreuse)
+box.draw_point(60, 24, bluebox.color_bold)
 
 box.display_screen()
 

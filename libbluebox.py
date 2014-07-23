@@ -7,11 +7,16 @@ This file contains the basic class object BlueBox and its subroutines.
 
 import libtcodpy as libtcod
 
+color_off = libtcod.black
+color_half = libtcod.darkest_green
+color_on = libtcod.dark_green
+color_bold = libtcod.green
+
 
 class BlueBox:
     # the BlueBox instance object
     def __init__(self, win_name='BlueBox', boot_msg=True, graphics_layer=False, img=None,
-                 width=40, height=24, fps=48, foreground=libtcod.green, background=libtcod.black):
+                 width=40, height=24, fps=48, foreground=color_on, background=color_off):
         # declare initial graphics colors and resolution (40 or 80 column modes)
         self.win_name = win_name
         self.boot_msg = boot_msg
@@ -92,7 +97,7 @@ class BlueBox:
         # display current screen contents, including graphics layer if active
         for x in range(self.width):
             for y in range(self.height):
-                libtcod.console_put_char(self.con, x, y, self.screen[x][y], flag=libtcod.BKGND_NONE)
+                libtcod.console_put_char_ex(self.con, x, y, self.screen[x][y], self.foreground, self.background)
 
         libtcod.console_blit(self.con, 0, 0, self.width, self.height, 0, 0, 0)
         if self.graphics_layer and self.img is not None:
@@ -243,7 +248,7 @@ class BlueBox:
 
 class Cursor:
     # a simple class for packaging the cursor parameters
-    def __init__(self, x=0, y=0, char='_'):
+    def __init__(self, x=0, y=0, char=chr(176)):
         self.x = x
         self.y = y
         self.char = char
