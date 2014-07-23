@@ -22,7 +22,7 @@ def main_prompt():
                 try:
                     text = entry_mode(text)
                 except UnboundLocalError:
-                    box.text_out('NO PROGRAM IN MEMORY')
+                    box.text_out('NO FILE IN MEMORY')
             elif input_control[0] == 'INSERT':
                 try:
                     text = insert_mode(text, line=int(input_control[1]))
@@ -31,10 +31,13 @@ def main_prompt():
                 except ValueError:
                     box.text_out('NOT A NUMBER')
                 except UnboundLocalError:
-                    box.text_out('NO PROGRAM IN MEMORY')
+                    box.text_out('NO FILE IN MEMORY')
             elif input_control[0] == 'LIST':
-                for i in range(len(text)):
-                    box.text_out(str(i) + '. ' + text[i])
+                try:
+                    for i in range(len(text)):
+                        box.text_out(str(i) + '. ' + text[i])
+                except UnboundLocalError:
+                    box.text_out('NO FILE IN MEMORY')
             elif input_control[0] == 'SAVE':
                 save_program(text, input_control[1])
             elif input_control[0] == 'LOAD':

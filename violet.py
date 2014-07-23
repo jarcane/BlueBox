@@ -1,14 +1,16 @@
 """
 violet.py - Verbose Interpreted Operating Language for Educational Terminals
 
-An interpreter for the CAI-1 "Blue Box" VIOLET programming language
+An interpreter for the CAI-1 "Blue Box" VIOLET programming language, powered by the BlueBox library.
 """
 
 import libbluebox as bluebox
+import os
 
 
 def main_prompt():
-    controls = ['BEGIN', 'APPEND', 'INSERT', 'LIST', 'SAVE', 'LOAD', 'RUN', 'EXIT']
+    # Define the basic 'controls', what VIOLET calls the interpreter level commands
+    controls = ['BEGIN', 'APPEND', 'INSERT', 'DELETE', 'LIST', 'SAVE', 'LOAD', 'DIR', 'RUN', 'EXIT']
     execute = True
 
     while execute:
@@ -17,7 +19,6 @@ def main_prompt():
         if not input_control:
             box.text_out('EMPTY')
         elif input_control[0] in controls:
-
             if input_control[0] == 'BEGIN':
                 program = entry_mode()
             elif input_control[0] == 'APPEND':
@@ -34,13 +35,28 @@ def main_prompt():
                     box.text_out('NOT A NUMBER')
                 except UnboundLocalError:
                     box.text_out('NO PROGRAM IN MEMORY')
+            elif input_control[0] == 'DELETE':
+                try:
+                    del program[int(input_control[1]):int(input_control[2])]
+                except IndexError:
+                    box.text_out('MISSING LINE NUMBER')
+                except ValueError:
+                    box.text_out('NOT A NUMBER')
+                except UnboundLocalError:
+                    box.text_out('NO PROGRAM IN MEMORY')
             elif input_control[0] == 'LIST':
-                for i in range(len(program)):
-                    box.text_out(str(i) + '. ' + program[i])
+                try:
+                    for i in range(len(program)):
+                        box.text_out(str(i) + '. ' + program[i])
+                except UnboundLocalError:
+                    box.text_out('NO PROGRAM IN MEMORY')
             elif input_control[0] == 'SAVE':
                 save_program(program, input_control[1])
             elif input_control[0] == 'LOAD':
                 program = load_program(input_control[1])
+            elif input_control[0] == 'DIR':
+                for i in os.listdir(os.getcwd()):
+                    box.text_out(i)
             elif input_control[0] == 'RUN':
                 run_program(program)
             elif input_control[0] == 'EXIT':
@@ -94,9 +110,10 @@ def save_program(program, name):
     # save the program to a plain text file with name "name"
     f = open(name, mode='w')
     for i in program:
-        f.write(i + '\n')
+        f.write(i + '\n')  # add a newline to the end of the file, otherwise it will all be saved to one line
     f.close()
     box.text_out('FILE SAVED AS ' + name)
+
     return
 
 
@@ -108,11 +125,14 @@ def load_program(name):
         box.text_out('FILE NOT FOUND OR FAULT')
         return
 
+    # create an empty program
     program = []
 
+    # loop through the loaded file, and add the entries (stripped of newlines) to the new program
     for line in f:
         program.append(line.strip('\n'))
 
+    # close the file and return the new program
     f.close()
     return program
 
@@ -125,6 +145,8 @@ def run_program(program):
 # initialization and main loop
 ################################
 
+# initialize BlueBox instance
 box = bluebox.BlueBox(width=80)
 
+# call the main command prompt
 main_prompt()
