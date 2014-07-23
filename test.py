@@ -15,6 +15,8 @@ box.draw_point(60, 24, libtcod.chartreuse)
 
 box.display_screen()
 
+box.text_in()
+
 box.set_graphics(flag=False)
 
 box.text_out('some graphics and ' + text)
