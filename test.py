@@ -15,7 +15,7 @@ box.draw_point(62, 24, bluebox.color_half)
 box.draw_point(64, 24, bluebox.color_on)
 
 box.draw_line(0, 0, 50, 30)
-box.draw_line(0, 0, 30, 50)
+box.draw_line(0, 0, 30, 55)
 
 box.display_screen()
 
