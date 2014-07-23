@@ -11,7 +11,7 @@ import libtcodpy as libtcod
 class BlueBox:
     # the BlueBox instance object
     def __init__(self, win_name='BlueBox', boot_msg=True, graphics_layer=False, img=None,
-                 width=40, height=24, fps=48, foreground=libtcod.black, background=libtcod.green):
+                 width=40, height=24, fps=48, foreground=libtcod.green, background=libtcod.black):
         # declare initial graphics colors and resolution (40 or 80 column modes)
         self.win_name = win_name
         self.boot_msg = boot_msg
@@ -86,8 +86,19 @@ class BlueBox:
         self.clear_graphics()
         self.cursor.x = 0
         self.cursor.y = 0
-        self.refresh_screen()
+        self.display_screen()
 
+    def display_screen(self):
+        # display current screen contents, including graphics layer if active
+        for x in range(self.width):
+            for y in range(self.height):
+                libtcod.console_put_char(self.con, x, y, self.screen[x][y], flag=libtcod.BKGND_NONE)
+
+        libtcod.console_blit(self.con, 0, 0, self.width, self.height, 0, 0, 0)
+        if self.graphics_layer and self.img is not None:
+            libtcod.image_set_key_color(self.img, self.background)
+            libtcod.image_blit_2x(self.img, 0, 0, 0)
+        libtcod.console_flush()
 
     def draw_point(self, x, y, color=None):
         # draw a pixel to the screen's semigraphics layer
@@ -98,18 +109,6 @@ class BlueBox:
         if self.graphics_layer and self.img is not None:
             libtcod.image_put_pixel(self.img, x, y, color)
             return
-
-    def refresh_screen(self):
-        # display current screen contents, including graphics layer if active
-        for x in range(self.width):
-            for y in range(self.height):
-                libtcod.console_put_char(self.con, x, y, self.screen[x][y])
-
-        libtcod.console_blit(self.con, 0, 0, self.width, self.height, 0, 0, 0)
-        if self.graphics_layer and self.img is not None:
-            libtcod.image_set_key_color(self.img, self.background)
-            libtcod.image_blit_2x(self.img, 0, 0, 0)
-        libtcod.console_flush()
 
     def set_graphics(self, flag=True):
         # if the graphics layer hasn't been initialized, start it
@@ -130,7 +129,7 @@ class BlueBox:
             self.screen[self.cursor.x][self.cursor.y] = i
 
             # call display_screen to display the new results
-            self.refresh_screen()
+            self.display_screen()
 
             # increment the x position of the cursor in preparation for the next character.
             self.cursor.x += 1
@@ -221,7 +220,7 @@ class BlueBox:
                 text += letter
 
             # draw the current screen
-            self.refresh_screen()
+            self.display_screen()
 
             # remove the left margin if no longer on the first line
             if not first_line:
