@@ -58,6 +58,11 @@ class Interpreter:
 
         # Main execution loop
         while self.running:
+            # check the pointer to make sure some errant GOTO hasn't left the program space
+            if self.pointer > len(self.program):
+                self.box.text_out('ERROR - POINTER HAS LEFT THE PROGRAM')
+                return
+
             # parse the next line of the program
             exec_line = self.parse(self.program[self.pointer])
 
@@ -75,7 +80,8 @@ class Interpreter:
 
         return
 
-    def parse(self, line):
+    @staticmethod
+    def parse(line):
         # parse an incoming line of code and return it as a list of tokens
         token_list = shlex.split(line)
 
@@ -89,7 +95,6 @@ class Interpreter:
                 token_list[i] = int(token_list[i])
             except ValueError:
                 pass
-        print token_list
         return token_list
 
     def execute(self, line):
@@ -125,17 +130,18 @@ class Interpreter:
                 count = 0
                 for i in self.program[self.pointer:]:
                     if i == 'WHEND':
-                        print "Found at " + str(count)
                         self.w_pointer = None
                         self.pointer += count
                         break
                     count += 1
-
                 return 'SUCCESS', count
         elif line[0] == 'WHEND':
             if self.w_pointer is not None:
                 self.pointer = self.w_pointer - 1
             return 'SUCCESS', 1
+        elif line[0] == 'GOTO':
+            if type(self.name_lookup(line[1])) != type('str'):
+                self.pointer = int(self.name_lookup(line[1]))
         elif line[0] == 'SET':
             return self.set(line[1], line[2])
         elif line[0] == 'ADD':
@@ -149,6 +155,26 @@ class Interpreter:
                 except TypeError:
                     return 'TYPE MISMATCH', 0
             return 'SUCCESS', total
+        elif line[0] == 'SUB':
+            try:
+                value = self.name_lookup(line[1]) - self.name_lookup(line[2])
+                return 'SUCCESS', value
+            except TypeError:
+                return 'ERROR - SUB NEEDS NUMBERS', 0
+        elif line[0] == 'MULT':
+            try:
+                total = 1
+                for i in line[1:]:
+                    total *= self.name_lookup(i)
+                return 'SUCCESS', total
+            except TypeError:
+                return 'ERROR - MULT NEEDS NUMBERS', 0
+        elif line[0] == 'DIV':
+            try:
+                value = self.name_lookup(line[1]) / self.name_lookup(line[2])
+                return 'SUCCESS', value
+            except TypeError:
+                return 'ERROR - DIV NEEDS NUMBERS', 0
         elif line[0] == 'PRINT':
             output = ''
             for i in line[1:]:
@@ -159,6 +185,8 @@ class Interpreter:
             for i in line[1:]:
                 self.box.text_out(i)
             return 'SUCCESS', 1
+        elif line[0] == 'PROMPT':
+            return self.prompt(*line[1:])
 
         # If execute has got this far, it's failed, so we let the run loop know it did
         return 'RUNTIME ERROR', 0
@@ -198,13 +226,13 @@ class Interpreter:
             return 'UNDEFINED VARIABLE', 0
 
         result = self.test(test, x, y)
+        r = None
         if result is None:
             return 'WRONG TEST OPERATOR', 0
         elif result:
             r = 1
         elif not result:
             r = 0
-
         return 'SUCCESS', r
 
     def set(self, name, value):
@@ -240,3 +268,30 @@ class Interpreter:
                 return None
         else:
             return x
+
+    def prompt(self, data_type, prompt=None):
+        # present an input prompt to the user, and return a value of the requested type
+        if data_type not in ['#', '%', '$']:
+            return 'MISSING OR INCORRECT TYPE', 0
+
+        output = None
+        while output is None:
+            if prompt is None:
+                data = self.box.text_in(prompt=True)
+            else:
+                data = self.box.text_in(prompt=True, prompt_text=prompt)
+
+            if data_type == '#':
+                try:
+                    output = int(data)
+                except ValueError:
+                    self.box.text_out('WRONG TYPE - NEEDS INTEGER')
+            elif data_type == '%':
+                try:
+                    output = float(data)
+                except ValueError:
+                    self.box.text_out('WRONG TYPE - NEEDS FLOATING POINT')
+            elif data_type == '$':
+                output = data
+
+        return 'SUCCESS', output

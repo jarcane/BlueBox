@@ -88,6 +88,14 @@ div.plain_layout {
 text-align: left;
 
 }
+h4.subsubsection {
+font-weight: bold;
+font-size: medium;
+margin-top: 0.7ex;
+margin-bottom: 0.4ex;
+text-align: left;
+
+}
 div.listings {
 font-family: monospace;
 }
@@ -188,7 +196,7 @@ $VAR (string)
 Integers and floats are numeric values. An integer declaration will fail if a decimal point is found.</div>
 
 <div class="standard"><a id='magicparlabel-5796' />
-String values are sequences of ASCII characters enclosed in quotation marks.</div>
+String values are sequences of characters. Best declared with quotation marks, elsewise the parser will ignore past the first word.</div>
 
 <div class="standard"><a id='magicparlabel-5797' />
 The "dump" variable is a special type, reserved solely for the &amp;LAST value, and may at any given time contain either a string or a number. Care should thus be taken when calling &amp;LAST to ensure it contains the right value.</div>
@@ -270,10 +278,12 @@ Operator Reference</h2>
 This section contains a list of the available VIOLET operators and their syntax. It is useful to note a convention here: operators are always given word names rather than symbols (thus giving meaning to the &ldquo;Verbose&rdquo; portion of the acronym). This was a requirement set by the Board of Education, who believed that use of full word commands would be 'easier to understand.' Minutes of previous meetings indicate that even allowing the type prefix on variables required considerable argumentation.</div>
 <h3 class="subsection"><span class="subsection_label">6.1</span> <a id='magicparlabel-7687' />
 Arithmetic</h3>
+<div class="standard"><a id='magicparlabel-20135' />
+Note that except for ADD, arithmetic operations only operate on numbers.</div>
 
 <dl class='description'><dt class="description_label">ADD&nbsp;*args:</dt>
 <dd class="description_item"><a id='magicparlabel-7692' />
-<em> </em>Adds the value list given and assigns it to &amp;LAST.</dd>
+<em> </em>Totals the value list given and assigns it to &amp;LAST. If the list is strings, ADD concatenates the strings without any delimiter.</dd>
 <dt class="description_label">SUB&nbsp;first_value&nbsp;second_value:</dt>
 <dd class="description_item"><a id='magicparlabel-7827' />
 <em> </em>Subtracts <em>second_value</em> from <em>first_value </em>and assigns it to &amp;LAST.</dd>
@@ -281,8 +291,8 @@ Arithmetic</h3>
 <dd class="description_item"><a id='magicparlabel-7844' />
 <em> </em>Multiplies the value list given in order and assigns the total to &amp;LAST.</dd>
 <dt class="description_label">DIV&nbsp;first_value&nbsp;second_value:</dt>
-<dd class="description_item"><a id='magicparlabel-7853' />
-<em> </em>Divides <em>first_value</em> by <em>second_value, </em>and assigns the result to &amp;LAST. Note that if both values are integers, it will return an integer result, dropping the remainder. If one value is a float, it will return a float. <em>Be very careful therefore when assigning &amp;LAST back to a variable!</em></dd>
+<dd class="description_item"><a id='magicparlabel-23045' />
+<em> </em>Divides <em>first_value</em> by <em>second_value, </em>and assigns the result to &amp;LAST. Note that if both values are integers, it will return an integer result, dropping the remainder. If both values are floats, it will return a float. <em>If dividing values of mixed type, the result will be an integer. Be very careful therefore when assigning &amp;LAST back to a variable!</em></dd>
 </dl>
 <h3 class="subsection"><span class="subsection_label">6.2</span> <a id='magicparlabel-7954' />
 Flow Control</h3>
@@ -301,16 +311,40 @@ Flow Control</h3>
  If &amp;LAST is 0, executes <em>operator</em> with its <em>args.</em> Otherwise, sets &amp;LAST to 1. </dd>
 <dt class="description_label">WHILE&nbsp;test&nbsp;first_value&nbsp;second_value:</dt>
 <dd class="description_item"><a id='magicparlabel-8101' />
- Tests <em>first_value </em>against <em>second_value</em> using operator <em>test</em>. If the test is true, it stores the pointer and executes the next line of code, if not, it seeks the WHEND operator and sets the pointer to the line following it.</dd>
+ Tests <em>first_value </em>against <em>second_value</em> using operator <em>test</em>. If the test is true, it stores the pointer and executes the next line of code, if not, it seeks the WHEND operator and sets the pointer to the line following it. Sets &amp;LAST to 1 if true, or to the number of lines skipped to </dd>
 <dt class="description_label">WHEND</dt>
 <dd class="description_item"><a id='magicparlabel-8118' />
- Sets the pointer to the value stored by WHILE.</dd>
+ Sets the pointer to the value stored by WHILE if such a value is present.</dd>
 <dt class="description_label">GOTO&nbsp;line:</dt>
 <dd class="description_item"><a id='magicparlabel-8138' />
 <em> </em>Jumps the pointer to the <em>line</em> specified.</dd>
 </dl>
+<h4 class="subsubsection"><span class="subsubsection_label">6.2.1</span> <a id='magicparlabel-18404' />
+Test Operators</h4>
+<div class="standard"><a id='magicparlabel-18411' />
+Used by IF and WHILE.</div>
+
+<dl class='description'><dt class="description_label">EQUALS</dt>
+<dd class="description_item"><a id='magicparlabel-18424' />
+ Tests if the two values are equal to each other.</dd>
+<dt class="description_label">NOTEQ</dt>
+<dd class="description_item"><a id='magicparlabel-18425' />
+ Tests if the two values are equal to each other.</dd>
+<dt class="description_label">GREATER</dt>
+<dd class="description_item"><a id='magicparlabel-18426' />
+ Returns true if <em>first_value</em> is greater than <em>second_value.</em></dd>
+<dt class="description_label">LESSER</dt>
+<dd class="description_item"><a id='magicparlabel-18427' />
+ Returns true if <em>first_value </em>is less than <em>second_value.</em></dd>
+<dt class="description_label">AND</dt>
+<dd class="description_item"><a id='magicparlabel-18428' />
+ Returns true if both values are greater than 0, or false if not.</dd>
+<dt class="description_label">OR</dt>
+<dd class="description_item"><a id='magicparlabel-18429' />
+ Returns true if either value is greater than 0.</dd>
+</dl>
 <h3 class="subsection"><span class="subsection_label">6.3</span> <a id='magicparlabel-8175' />
-SET</h3>
+Variables</h3>
 
 <dl class='description'><dt class="description_label">SET&nbsp;name&nbsp;value:</dt>
 <dd class="description_item"><a id='magicparlabel-8185' />
@@ -324,7 +358,7 @@ SET</h3>
 <em> </em>A floating-point numeric value. </dd>
 <dt class="description_label">$&nbsp;string:</dt>
 <dd class="description_item"><a id='magicparlabel-9998' />
-<em> </em>A sequence of ASCII characters, which must be enclosed in quotation marks</dd>
+<em> </em>A sequence of ASCII characters. Unless enclosed in quotation marks, whitespaces will delimit the string, causing SET to ignore all but the first word.</dd>
 </dl>
 </dd></dl>
 <h3 class="subsection"><span class="subsection_label">6.4</span> <a id='magicparlabel-8415' />
@@ -332,10 +366,13 @@ Input/Output</h3>
 
 <dl class='description'><dt class="description_label">PRINT&nbsp;*args:</dt>
 <dd class="description_item"><a id='magicparlabel-8421' />
-<em> </em>Prints each argument, seperated by spaces. </dd>
+<em> </em>Prints each argument, separated by spaces. </dd>
+<dt class="description_label">PRINTLINES&nbsp;*args:</dt>
+<dd class="description_item"><a id='magicparlabel-17825' />
+<em> </em>Prints each argument, each on a new line.</dd>
 <dt class="description_label">PROMPT&nbsp;type&nbsp;[prompt]:</dt>
 <dd class="description_item"><a id='magicparlabel-8521' />
-<em> </em>Accepts input from the terminal, returning an error if it does not match type, and stores the result to &amp;LAST. The optional argument <em>prompt</em> takes a string which will replace the standard &ldquo;&gt; &ldquo; prompt.</dd>
+<em> </em>Accepts input from the terminal, looping until user inputs data that matches <em>type</em>, and stores the result to &amp;LAST. The optional argument <em>prompt</em> takes a string which will replace the standard &ldquo;&gt; &ldquo; prompt.</dd>
 </dl>
 <h3 class="subsection"><span class="subsection_label">6.5</span> <a id='magicparlabel-8557' />
 Additional Operators</h3>

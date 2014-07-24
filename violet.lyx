@@ -571,7 +571,7 @@ Arithmetic
 \end_layout
 
 \begin_layout Standard
-Note that arithmetic operations only operate on numbers.
+Note that except for ADD, arithmetic operations only operate on numbers.
 \end_layout
 
 \begin_layout Description
@@ -586,7 +586,8 @@ ADD
 \series default
 : 
 \emph default
-Adds the value list given and assigns it to &LAST.
+Totals the value list given and assigns it to &LAST.
+ If the list is strings, ADD concatenates the strings without any delimiter.
 \end_layout
 
 \begin_layout Description
@@ -660,10 +661,11 @@ second_value,
 and assigns the result to &LAST.
  Note that if both values are integers, it will return an integer result,
  dropping the remainder.
- If one value is a float, it will return a float.
+ If both values are floats, it will return a float.
  
 \emph on
-Be very careful therefore when assigning &LAST back to a variable!
+If dividing values of mixed type, the result will be an integer.
+ Be very careful therefore when assigning &LAST back to a variable!
 \end_layout
 
 \begin_layout Subsection
@@ -1041,8 +1043,12 @@ type
 \series default
 : 
 \emph default
-Accepts input from the terminal, returning an error if it does not match
- type, and stores the result to &LAST.
+Accepts input from the terminal, looping until user inputs data that matches
+ 
+\emph on
+type
+\emph default
+, and stores the result to &LAST.
  The optional argument 
 \emph on
 prompt
