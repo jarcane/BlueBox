@@ -570,6 +570,10 @@ Verbose
 Arithmetic
 \end_layout
 
+\begin_layout Standard
+Note that arithmetic operations only operate on numbers.
+\end_layout
+
 \begin_layout Description
 ADD
 \begin_inset space ~
@@ -814,10 +818,11 @@ test
  If the test is true, it stores the pointer and executes the next line of
  code, if not, it seeks the WHEND operator and sets the pointer to the line
  following it.
+ Sets &LAST to 1 if true, or to the number of lines skipped to 
 \end_layout
 
 \begin_layout Description
-WHEND Sets the pointer to the value stored by WHILE.
+WHEND Sets the pointer to the value stored by WHILE if such a value is present.
 \end_layout
 
 \begin_layout Description
@@ -840,8 +845,52 @@ line
  specified.
 \end_layout
 
+\begin_layout Subsubsection
+Test Operators
+\end_layout
+
+\begin_layout Standard
+Used by IF and WHILE.
+\end_layout
+
+\begin_layout Description
+EQUALS Tests if the two values are equal to each other.
+\end_layout
+
+\begin_layout Description
+NOTEQ Tests if the two values are equal to each other.
+\end_layout
+
+\begin_layout Description
+GREATER Returns true if 
+\emph on
+first_value
+\emph default
+ is greater than 
+\emph on
+second_value.
+\end_layout
+
+\begin_layout Description
+LESSER Returns true if 
+\emph on
+first_value 
+\emph default
+is less than 
+\emph on
+second_value.
+\end_layout
+
+\begin_layout Description
+AND Returns true if both values are greater than 0, or false if not.
+\end_layout
+
+\begin_layout Description
+OR Returns true if either value is greater than 0.
+\end_layout
+
 \begin_layout Subsection
-SET
+Variables
 \end_layout
 
 \begin_layout Description
@@ -936,8 +985,8 @@ string
 : 
 \emph default
 A sequence of ASCII characters.
- Unless enclosed in quotation marks, all but the first word delimited will
- be ignored.
+ Unless enclosed in quotation marks, whitespaces will delimit the string,
+ causing SET to ignore all but the first word.
 \end_layout
 
 \end_deeper

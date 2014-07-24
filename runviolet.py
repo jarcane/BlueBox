@@ -7,7 +7,7 @@ import shlex
 
 
 class Interpreter:
-    def __init__(self, program, box, pointer=0, w_pointer=0, running=False):
+    def __init__(self, program, box, pointer=0, w_pointer=None, running=False):
         self.program = program
         self.box = box
 
@@ -59,7 +59,7 @@ class Interpreter:
         # Main execution loop
         while self.running:
             # parse the next line of the program
-            exec_line = shlex.split(self.program[self.pointer])
+            exec_line = self.parse(self.program[self.pointer])
 
             # execute the code, receiving back a signal string and new &LAST
             evaluate = self.execute(exec_line)
@@ -74,6 +74,23 @@ class Interpreter:
                 self.running = False
 
         return
+
+    def parse(self, line):
+        # parse an incoming line of code and return it as a list of tokens
+        token_list = shlex.split(line)
+
+        # step through the token list, and properly convert numeric values to their appropriate types
+        for i in range(len(token_list)):
+            try:
+                token_list[i] = float(token_list[i])
+            except ValueError:
+                pass
+            try:
+                token_list[i] = int(token_list[i])
+            except ValueError:
+                pass
+        print token_list
+        return token_list
 
     def execute(self, line):
         # execute the operator in a parsed line of code
@@ -100,8 +117,38 @@ class Interpreter:
                 return self.execute(line[1:])
             else:
                 return 'SUCCESS', 1
+        elif line[0] == 'WHILE':
+            if self.test(line[1], self.name_lookup(line[2]), self.name_lookup(line[3])):
+                self.w_pointer = self.pointer
+                return 'SUCCESS', 1
+            else:
+                count = 0
+                for i in self.program[self.pointer:]:
+                    if i == 'WHEND':
+                        print "Found at " + str(count)
+                        self.w_pointer = None
+                        self.pointer += count
+                        break
+                    count += 1
+
+                return 'SUCCESS', count
+        elif line[0] == 'WHEND':
+            if self.w_pointer is not None:
+                self.pointer = self.w_pointer - 1
+            return 'SUCCESS', 1
         elif line[0] == 'SET':
             return self.set(line[1], line[2])
+        elif line[0] == 'ADD':
+            for i in range(len(line[1:])):
+                line[i] = self.name_lookup(line[i])
+            try:
+                total = sum(line[1:])
+            except TypeError:
+                try:
+                    total = ''.join(line[1:])
+                except TypeError:
+                    return 'TYPE MISMATCH', 0
+            return 'SUCCESS', total
         elif line[0] == 'PRINT':
             output = ''
             for i in line[1:]:
@@ -136,7 +183,6 @@ class Interpreter:
 
         # construct the test
         test = x + self.test_lex[operator] + y
-        print test
 
         # eval the test
         result = eval(test)
@@ -163,16 +209,17 @@ class Interpreter:
 
     def set(self, name, value):
         # create a new variable or modify an existing one with the value given
+        value = self.name_lookup(value)
         if name[0] == '#':
             try:
                 value = int(value)
             except ValueError:
-                return 'TYPE ERROR', 0
+                return 'TYPE ERROR - NOT AN INT', 0
         elif name[0] == '%':
             try:
                 value = float(value)
             except ValueError:
-                return 'TYPE ERROR', 0
+                return 'TYPE ERROR - NOT A FLOAT', 0
         elif name[0] == '$':
             value = str(value)
         elif name[0] == '&':
@@ -184,6 +231,8 @@ class Interpreter:
 
     def name_lookup(self, x):
         # look up a given value in the names dict and return the value or the new value if in names
+        if type(x) != type('str'):
+            return x
         if x[0] in ['#', '%', '$', '&']:
             if x in self.names.keys():
                 return self.names[x]
