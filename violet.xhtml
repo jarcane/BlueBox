@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN" "http://www.w3.org/TR/2001/REC-MathML2-20010221/dtd/xhtml-math11-f.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta name="GENERATOR" content="LyX 2.0.7" />
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+<title>The VIOLET Programming Language</title>
+
+<!-- Text Class Preamble -->
+<style type="text/css">
+div.toc {
+margin: 2em 0em;
+border-style: solid;
+border-width: 2px 0px;
+padding: 1em 0em;
+}
+div.tochead { font-size: x-large; font-weight: bold; }
+div.lyxtoc-0 {
+margin: 2em 0em 0em 0em;
+font-size: xx-large;
+font-weight: bold;
+}
+div.lyxtoc-1 {
+margin: 1em 0em 0em 0em;
+font-size: x-large;
+font-weight: bold;
+}
+div.lyxtoc-2 {
+margin: 0em 0em 0em 1em;
+font-size: large;
+font-weight: normal;
+}
+div.lyxtoc-3 { margin: 0em 0em 0em 0.5em; font-size: medium; }
+div.lyxtoc-4 { margin: 0em 0em 0em 0.5em; }
+div.lyxtoc-5 { margin: 0em 0em 0em 0.5em; }
+div.lyxtoc-6 { margin: 0em 0em 0em 0.5em; }
+a.tocentry {
+text-decoration: none;
+color: black;
+}
+a.tocentry:visited { color: black; }
+a.tocarrow {
+font-weight: bold;
+text-decoration: none;
+color: #909090;
+}
+a.tocarrow:visited { color: #C0C0C0; }
+</style>
+
+<!-- Preamble Snippets -->
+
+<!-- Layout-provided Styles -->
+<style type='text/css'>
+h1.title {
+font-size: x-large;
+margin-bottom: 1ex;
+text-align: center;
+
+}
+div.date {
+font-size: large;
+margin-top: 0.9ex;
+margin-bottom: 0.5ex;
+text-align: center;
+
+}
+h2.section {
+font-weight: bold;
+font-size: x-large;
+margin-top: 1.3ex;
+margin-bottom: 0.7ex;
+text-align: left;
+
+}
+div.standard {
+margin-bottom: 2ex;
+}
+h3.subsection {
+font-weight: bold;
+font-size: large;
+margin-top: 0.9ex;
+margin-bottom: 0.5ex;
+text-align: left;
+
+}
+dl.description dt { font-weight: bold; }
+div.plain_layout {
+text-align: left;
+
+}
+div.listings {
+font-family: monospace;
+}
+</style>
+</head>
+<body>
+<h1 class="title"><a id='magicparlabel-5751' />
+The VIOLET Programming Language</h1>
+<div class="date"><a id='magicparlabel-6113' />
+Last updated 07/24/14</div>
+<h2 class="section"><span class="section_label">1</span> <a id='magicparlabel-5754' />
+History</h2>
+<div class="standard"><a id='magicparlabel-5755' />
+VIOLET was developed for the Buttech CAI-1 "Blue Box", and served as the default ROM for the CAI-1. Licensing a BASIC interpreter was too expensive for the project's budget, and the programmer in charge of the requested PILOT implementation quit in protest, leaving a quickly promoted intern student from Butte County Community College with the task of quickly developing a suitable language. </div>
+
+<div class="standard"><a id='magicparlabel-5756' />
+VIOLET (short for Verbose Interpreted Operating Language for Educational Terminals) was the result. A gross mish-mash of PILOT, BASIC, FORTH, and even LISP, VIOLET nonetheless remained in use in the Butte County school system well into the 1990s, and some have blamed the county's poor turnout for quality software engineers directly on VIOLET's continued use and influence on impressionable young minds.</div>
+<h2 class="section"><span class="section_label">2</span> <a id='magicparlabel-5757' />
+The Editor</h2>
+<div class="standard"><a id='magicparlabel-5758' />
+VIOLET does not follow a typical interactive REPL such as many other interpreted languages, but instead begins operation in its editor mode. This is a simple line editor, with support for file save and load. </div>
+
+<div class="standard"><a id='magicparlabel-5759' />
+Its commands (or 'controls' in VIOLET terminology) are listed below, with arguments in lowercase. All arguments for editor controls are mandatory.</div>
+
+<div class="standard"><a id='magicparlabel-5760' />
+Control of the VIOLET editor switches between two modes: control mode, and entry mode. In control mode, the prompt '&gt; ' appears, and controls may be entered. Some controls will begin entry mode (indicated with a *), in which the user will be instead prompted with numbered prompts, into which a new code line can be entered. Entry mode can be exited by entering an empty line. </div>
+<h3 class="subsection"><span class="subsection_label">2.1</span> <a id='magicparlabel-5814' />
+Editor Controls</h3>
+
+<dl class='description'><dt class="description_label">BEGIN*:</dt>
+<dd class="description_item"><a id='magicparlabel-5952' />
+ Begins a new program and enters entry mode. </dd>
+<dt class="description_label">APPEND*:</dt>
+<dd class="description_item"><a id='magicparlabel-5764' />
+ Enters entry mode, adding new lines to the end of resident program in memory. Returns an error if no program is present.</dd>
+<dt class="description_label">INSERT&nbsp;line*:</dt>
+<dd class="description_item"><a id='magicparlabel-5766' />
+ Enters entry mode, inserting new lines at the point designated with the line argument. Returns error if line is not a number, is not in the range of current program length, or there is no program resident in memory.</dd>
+<dt class="description_label">DELETE&nbsp;startline&nbsp;endline:</dt>
+<dd class="description_item"><a id='magicparlabel-5768' />
+ Removes lines from the program from startline (inclusive) to endline (exclusive). Returns an error if arguments are not numbers, if they exceed range of current program length, or no program is in memory.</dd>
+<dt class="description_label">LIST:</dt>
+<dd class="description_item"><a id='magicparlabel-5770' />
+ Lists the present program, preceded by line numbers. Returns an error if no program is resident.</dd>
+<dt class="description_label">SAVE&nbsp;filename:</dt>
+<dd class="description_item"><a id='magicparlabel-5772' />
+ Saves the contents of the current program to a file called (filename)</dd>
+<dt class="description_label">LOAD&nbsp;filename:</dt>
+<dd class="description_item"><a id='magicparlabel-5774' />
+ Loads the contents of a file called filename, or returns an error if it doesn't exist.</dd>
+<dt class="description_label">DIR:</dt>
+<dd class="description_item"><a id='magicparlabel-5776' />
+ Lists the contents of the working directory (note: this is not a 100% authentic handling, but has been implemented for usability's sake.)</dd>
+<dt class="description_label">RUN:</dt>
+<dd class="description_item"><a id='magicparlabel-5778' />
+ Sends the current program in memory to the interpreter and attempts to execute it.</dd>
+<dt class="description_label">EXIT:</dt>
+<dd class="description_item"><a id='magicparlabel-5780' />
+ Exits the interpreter. (Note: On the original hardware this would quit to the built in monitor; here it just exits the program)</dd>
+</dl>
+<h2 class="section"><span class="section_label">3</span> <a id='magicparlabel-5782' />
+Basic Structure</h2>
+<div class="standard"><a id='magicparlabel-5783' />
+Each line in a VIOLET program consists of an "operator", and its arguments. The operator must begin the line, and if the interpreter fails to find a valid operator, it will quit.</div>
+
+<div class="standard"><a id='magicparlabel-5784' />
+Every operator essentially acts as a function, and thus returns a value in addition to any other effects, which is stored in a built-in variable called &amp;LAST. This is used both internally to handle conditional statements, and can be called upon to apply the result of previous mathematical operations to a variable. For example: </div>
+
+<div class="standard"><a id='magicparlabel-5785' />
+</div>
+<div class='float float-listings'><pre>ADD #X 45
+SET #X %LAST</pre></div>
+
+
+<div class="standard"><a id='magicparlabel-5787' />
+is a statement roughly equivalent to "x = x + 45" as might be found in other languages.</div>
+
+<div class="standard"><a id='magicparlabel-5788' />
+All programs MUST begin with the declarative operator PROGRAM, taking START as its argument, and end with PROGRAM STOP. This is especially necessary because the VIOLET editor operates in plain text and VIOLET code is not tokenized like other contemporary languages, thus requiring a clear statement of initialization to distinguish a program file from arbitrary text documents.</div>
+
+<div class="standard"><a id='magicparlabel-5789' />
+Operators are always given in upper case, and will not be recognized otherwise. Variables can be upper or lower case, however easier typing meant convention tended to be to keep them upper case. </div>
+<h2 class="section"><span class="section_label">4</span> <a id='magicparlabel-5790' />
+Variable Conventions</h2>
+<div class="standard"><a id='magicparlabel-5791' />
+Variables in VIOLET consist of three types, indicated by their preceding symbol:</div>
+
+<div class="standard"><a id='magicparlabel-5792' />
+</div>
+<div class='float float-listings'><pre>#VAR (integer)
+%VAR (float)
+$VAR (string)
+&amp;VAR (dump, reserved for %LAST)</pre></div>
+
+
+<div class="standard"><a id='magicparlabel-5795' />
+Integers and floats are numeric values. An integer declaration will fail if a decimal point is found, and a float will fail if no decimal point is found (declare whole number floats with trailing 0 decimal, like <em>4.0</em>).</div>
+
+<div class="standard"><a id='magicparlabel-5796' />
+String values are sequences of ASCII characters enclosed in quotation marks.</div>
+
+<div class="standard"><a id='magicparlabel-5797' />
+The "dump" variable is a special type, reserved solely for the &amp;LAST value, and may at any given time contain either a string or a number. Care should thus be taken when calling &amp;LAST to ensure it contains the right value.</div>
+
+<div class="standard"><a id='magicparlabel-5798' />
+Note also that unlike some languages, bare declarations of variables are NOT allowed in VIOLET, and must always begin with the operator SET. SET takes two arguments, a variable name, and an appropriate value to the variable type. SET will fail on a mismatch, or on attempt to assign a new dump or to &amp;LAST.</div>
+
+<div class="standard"><a id='magicparlabel-5799' />
+All variables are global, as VIOLET does not possess any form of scoping, much like old-fashioned BASIC.</div>
+<h2 class="section"><span class="section_label">5</span> <a id='magicparlabel-6401' />
+Flow Control</h2>
+<div class="standard"><a id='magicparlabel-6405' />
+VIOLET's flow control methods are fairly primitive, being limited largely to the IF/IFY/IFN operator set, and a WHILE/WHEND loop, as well as the usual GOTO statement found in many of these languages. </div>
+<h3 class="subsection"><span class="subsection_label">5.1</span> <a id='magicparlabel-6436' />
+IF</h3>
+<div class="standard"><a id='magicparlabel-6440' />
+The IF operator takes a test, and evaluates it, returning 1 to &amp;LAST if the test is true, and 0 if the test is false. The IF statement can then be followed with the IFY operator (which executes the given operator and its arguments if &amp;LAST is 1, returning 0 if not) or the IFN operator (which executes the given operator and its arguments if &amp;LAST is 0, returning 1 if not). Not that either statement can be skipped, and because they rely on &amp;LAST, they do not even especially require the presence of a preceding IF operator.</div>
+
+<div class="standard"><a id='magicparlabel-6577' />
+The IF test syntax is simple, taking exactly three arguments:</div>
+
+<div class="standard"><a id='magicparlabel-6589' />
+</div>
+<div class='float float-listings'><pre>IF TESTOPERATOR first_value second_value</pre></div>
+
+
+<div class="standard"><a id='magicparlabel-6608' />
+The test operators are as follows:</div>
+
+<dl class='description'><dt class="description_label">EQUALS</dt>
+<dd class="description_item"><a id='magicparlabel-6619' />
+ Tests if the two values are equal to each other.</dd>
+<dt class="description_label">NOTEQ</dt>
+<dd class="description_item"><a id='magicparlabel-6626' />
+ Tests if the two values are equal to each other.</dd>
+<dt class="description_label">GREATER</dt>
+<dd class="description_item"><a id='magicparlabel-6634' />
+ Returns true if <em>first_value</em> is greater than <em>second_value.</em></dd>
+<dt class="description_label">LESSER</dt>
+<dd class="description_item"><a id='magicparlabel-6647' />
+ Returns true if <em>first_value </em>is less than <em>second_value.</em></dd>
+<dt class="description_label">AND</dt>
+<dd class="description_item"><a id='magicparlabel-6706' />
+ Returns true if both values are greater than 0, or false if not.</dd>
+<dt class="description_label">OR</dt>
+<dd class="description_item"><a id='magicparlabel-6713' />
+ Returns true if either value is greater than 0.</dd>
+</dl>
+<div class="standard"><a id='magicparlabel-6718' />
+A sample usage of IF looks like the following:</div>
+
+<div class="standard"><a id='magicparlabel-6724' />
+</div>
+<div class='float float-listings'><pre>IF EQUALS #VAR 45
+IFY SET #VAR 0
+IFN SET #VAR 100</pre></div>
+
+<h3 class="subsection"><span class="subsection_label">5.2</span> <a id='magicparlabel-6759' />
+WHILE</h3>
+<div class="standard"><a id='magicparlabel-6763' />
+The WHILE operator syntax is similar to the IF operator, but rather than executing a different bit of code depending on the test, it instead continually executes everything between the WHILE and WHEND operators while the test remains true. For example:</div>
+
+<div class="standard"><a id='magicparlabel-6787' />
+</div>
+<div class='float float-listings'><pre>SET #X 99
+WHILE NOTEQ #X 0
+PRINT #X "BOTTLES OF BEER ON THE WALL"
+SUB #X 1
+SET #X &amp;LAST
+WHEND</pre></div>
+
+<h3 class="subsection"><span class="subsection_label">5.3</span> <a id='magicparlabel-7078' />
+GOTO</h3>
+<div class="standard"><a id='magicparlabel-7090' />
+VIOLET contains the dreaded GOTO command, and its use is perhaps even more problematic here than in other languages, as the line number of a given line cannot be guaranteed. GOTO <em>line </em>jumps the current execution pointer to <em>line, </em>where line is indexed from 0 based on the number of lines in the current program. Thus, if the program is edited and the number of lines changes, the old GOTO command will now go god knows where in the program. </div>
+<h2 class="section"><span class="section_label">6</span> <a id='magicparlabel-7639' />
+Operator Reference</h2>
+<div class="standard"><a id='magicparlabel-7643' />
+This section contains a list of the available VIOLET operators and their syntax. It is useful to note a convention here: operators are always given word names rather than symbols (thus giving meaning to the &ldquo;Verbose&rdquo; portion of the acronym). This was a requirement set by the Board of Education, who believed that use of full word commands would be 'easier to understand.' Minutes of previous meetings indicate that even allowing the type prefix on variables required considerable argumentation.</div>
+<h3 class="subsection"><span class="subsection_label">6.1</span> <a id='magicparlabel-7687' />
+Arithmetic</h3>
+
+<dl class='description'><dt class="description_label">ADD&nbsp;*args:</dt>
+<dd class="description_item"><a id='magicparlabel-7692' />
+<em> </em>Adds the value list given and assigns it to &amp;LAST.</dd>
+<dt class="description_label">SUB&nbsp;first_value&nbsp;second_value:</dt>
+<dd class="description_item"><a id='magicparlabel-7827' />
+<em> </em>Subtracts <em>second_value</em> from <em>first_value </em>and assigns it to &amp;LAST.</dd>
+<dt class="description_label">MULT&nbsp;*args:</dt>
+<dd class="description_item"><a id='magicparlabel-7844' />
+<em> </em>Multiplies the value list given in order and assigns the total to &amp;LAST.</dd>
+<dt class="description_label">DIV&nbsp;first_value&nbsp;second_value:</dt>
+<dd class="description_item"><a id='magicparlabel-7853' />
+<em> </em>Divides <em>first_value</em> by <em>second_value, </em>and assigns the result to &amp;LAST. Note that if both values are integers, it will return an integer result, dropping the remainder. If one value is a float, it will return a float. <em>Be very careful therefore when assigning &amp;LAST back to a variable!</em></dd>
+</dl>
+<h3 class="subsection"><span class="subsection_label">6.2</span> <a id='magicparlabel-7954' />
+Flow Control</h3>
+
+<dl class='description'><dt class="description_label">IF&nbsp;test&nbsp;first_value&nbsp;second_value:</dt>
+<dd class="description_item"><a id='magicparlabel-7960' />
+<em> </em>Tests <em>first_value </em>against <em>second_value</em> using operator <em>test, </em>returning 1 to &amp;LAST if true, or 0 if false.</dd>
+<dt class="description_label">IFY&nbsp;operator&nbsp;*args:</dt>
+<dd class="description_item"><a id='magicparlabel-7978' />
+<em> </em>If &amp;LAST is 1, executes <em>operator</em> with its <em>args.</em> Otherwise, sets &amp;LAST to 0.</dd>
+<dt class="description_label">IFN&nbsp;operator&nbsp;*args:</dt>
+<dd class="description_item"><a id='magicparlabel-8085' />
+ If &amp;LAST is 0, executes <em>operator</em> with its <em>args.</em> Otherwise, sets &amp;LAST to 1. </dd>
+<dt class="description_label">WHILE&nbsp;test&nbsp;first_value&nbsp;second_value:</dt>
+<dd class="description_item"><a id='magicparlabel-8101' />
+ Tests <em>first_value </em>against <em>second_value</em> using operator <em>test</em>. If the test is true, it stores the pointer and executes the next line of code, if not, it seeks the WHEND operator and sets the pointer to the line following it.</dd>
+<dt class="description_label">WHEND</dt>
+<dd class="description_item"><a id='magicparlabel-8118' />
+ Sets the pointer to the value stored by WHILE.</dd>
+<dt class="description_label">GOTO&nbsp;line:</dt>
+<dd class="description_item"><a id='magicparlabel-8138' />
+<em> </em>Jumps the pointer to the <em>line</em> specified.</dd>
+</dl>
+<h3 class="subsection"><span class="subsection_label">6.3</span> <a id='magicparlabel-8175' />
+SET</h3>
+
+<dl class='description'><dt class="description_label">SET&nbsp;name&nbsp;value:</dt>
+<dd class="description_item"><a id='magicparlabel-8185' />
+<em> </em>Sets the variable <em>name</em> to <em>value</em>, creating <em>name </em>if it does not exist. Name <strong>must</strong> be preceded by one of the following symbols, designating its type, and if the type and the value mismatch, the interpreter will produce an error and exit. SET returns <em>value</em> to &amp;LAST.
+
+<dl class='description'><dt class="description_label">#&nbsp;integer:</dt>
+<dd class="description_item"><a id='magicparlabel-8341' />
+<em> </em>A whole number value. Will create a mismatch if a decimal point is found.</dd>
+<dt class="description_label">%&nbsp;float:</dt>
+<dd class="description_item"><a id='magicparlabel-8370' />
+<em> </em>A floating-point numeric value. Will create a mismatch if no trailing decimal is found. Create whole number values by trailing with <em>.0</em>.</dd>
+<dt class="description_label">$&nbsp;string:</dt>
+<dd class="description_item"><a id='magicparlabel-8385' />
+<em> </em>A sequence of ASCII characters, which must be enclosed in quotation marks</dd>
+</dl>
+</dd></dl>
+<h3 class="subsection"><span class="subsection_label">6.4</span> <a id='magicparlabel-8415' />
+Input/Output</h3>
+
+<dl class='description'><dt class="description_label">PRINT&nbsp;*args:</dt>
+<dd class="description_item"><a id='magicparlabel-8421' />
+<em> </em>Prints each argument, seperated by spaces. </dd>
+<dt class="description_label">PROMPT&nbsp;type&nbsp;[prompt]:</dt>
+<dd class="description_item"><a id='magicparlabel-8521' />
+<em> </em>Accepts input from the terminal, returning an error if it does not match type, and stores the result to &amp;LAST. The optional argument <em>prompt</em> takes a string which will replace the standard &ldquo;&gt; &ldquo; prompt.</dd>
+</dl>
+<h3 class="subsection"><span class="subsection_label">6.5</span> <a id='magicparlabel-8557' />
+Additional Operators</h3>
+
+<dl class='description'><dt class="description_label">IGNORE&nbsp;*args:</dt>
+<dd class="description_item"><a id='magicparlabel-8561' />
+<em> </em>The IGNORE operator tells the interpreter to skip this line. This can be used for code commenting, allowing arbitrary information to follow it.</dd>
+</dl>
+</body>
+</html>

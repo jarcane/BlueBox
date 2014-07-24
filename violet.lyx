@@ -1,0 +1,1010 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+The VIOLET Programming Language
+\end_layout
+
+\begin_layout Date
+Last updated 07/24/14
+\end_layout
+
+\begin_layout Section
+History
+\end_layout
+
+\begin_layout Standard
+VIOLET was developed for the Buttech CAI-1 "Blue Box", and served as the
+ default ROM for the CAI-1.
+ Licensing a BASIC interpreter was too expensive for the project's budget,
+ and the programmer in charge of the requested PILOT implementation quit
+ in protest, leaving a quickly promoted intern student from Butte County
+ Community College with the task of quickly developing a suitable language.
+ 
+\end_layout
+
+\begin_layout Standard
+VIOLET (short for Verbose Interpreted Operating Language for Educational
+ Terminals) was the result.
+ A gross mish-mash of PILOT, BASIC, FORTH, and even LISP, VIOLET nonetheless
+ remained in use in the Butte County school system well into the 1990s,
+ and some have blamed the county's poor turnout for quality software engineers
+ directly on VIOLET's continued use and influence on impressionable young
+ minds.
+\end_layout
+
+\begin_layout Section
+The Editor
+\end_layout
+
+\begin_layout Standard
+VIOLET does not follow a typical interactive REPL such as many other interpreted
+ languages, but instead begins operation in its editor mode.
+ This is a simple line editor, with support for file save and load.
+ 
+\end_layout
+
+\begin_layout Standard
+Its commands (or 'controls' in VIOLET terminology) are listed below, with
+ arguments in lowercase.
+ All arguments for editor controls are mandatory.
+\end_layout
+
+\begin_layout Standard
+Control of the VIOLET editor switches between two modes: control mode, and
+ entry mode.
+ In control mode, the prompt '> ' appears, and controls may be entered.
+ Some controls will begin entry mode (indicated with a *), in which the
+ user will be instead prompted with numbered prompts, into which a new code
+ line can be entered.
+ Entry mode can be exited by entering an empty line.
+ 
+\end_layout
+
+\begin_layout Subsection
+Editor Controls
+\end_layout
+
+\begin_layout Description
+BEGIN*: Begins a new program and enters entry mode.
+ 
+\end_layout
+
+\begin_layout Description
+APPEND*: Enters entry mode, adding new lines to the end of resident program
+ in memory.
+ Returns an error if no program is present.
+\end_layout
+
+\begin_layout Description
+INSERT
+\emph on
+
+\begin_inset space ~
+\end_inset
+
+
+\series medium
+line
+\series default
+\emph default
+*: Enters entry mode, inserting new lines at the point designated with the
+ line argument.
+ Returns error if line is not a number, is not in the range of current program
+ length, or there is no program resident in memory.
+\end_layout
+
+\begin_layout Description
+DELETE
+\begin_inset space ~
+\end_inset
+
+
+\series medium
+\emph on
+startline
+\begin_inset space ~
+\end_inset
+
+endline
+\series default
+\emph default
+: Removes lines from the program from startline (inclusive) to endline (exclusiv
+e).
+ Returns an error if arguments are not numbers, if they exceed range of
+ current program length, or no program is in memory.
+\end_layout
+
+\begin_layout Description
+LIST: Lists the present program, preceded by line numbers.
+ Returns an error if no program is resident.
+\end_layout
+
+\begin_layout Description
+SAVE
+\begin_inset space ~
+\end_inset
+
+
+\series medium
+\emph on
+filename
+\series default
+\emph default
+: Saves the contents of the current program to a file called (filename)
+\end_layout
+
+\begin_layout Description
+LOAD
+\begin_inset space ~
+\end_inset
+
+
+\series medium
+\emph on
+filename
+\series default
+\emph default
+: Loads the contents of a file called filename, or returns an error if it
+ doesn't exist.
+\end_layout
+
+\begin_layout Description
+DIR: Lists the contents of the working directory (note: this is not a 100%
+ authentic handling, but has been implemented for usability's sake.)
+\end_layout
+
+\begin_layout Description
+RUN: Sends the current program in memory to the interpreter and attempts
+ to execute it.
+\end_layout
+
+\begin_layout Description
+EXIT: Exits the interpreter.
+ (Note: On the original hardware this would quit to the built in monitor;
+ here it just exits the program)
+\end_layout
+
+\begin_layout Section
+Basic Structure
+\end_layout
+
+\begin_layout Standard
+Each line in a VIOLET program consists of an "operator", and its arguments.
+ The operator must begin the line, and if the interpreter fails to find
+ a valid operator, it will quit.
+\end_layout
+
+\begin_layout Standard
+Every operator essentially acts as a function, and thus returns a value
+ in addition to any other effects, which is stored in a built-in variable
+ called &LAST.
+ This is used both internally to handle conditional statements, and can
+ be called upon to apply the result of previous mathematical operations
+ to a variable.
+ For example: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+ADD #X 45
+\end_layout
+
+\begin_layout Plain Layout
+
+SET #X %LAST
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+is a statement roughly equivalent to "x = x + 45" as might be found in other
+ languages.
+\end_layout
+
+\begin_layout Standard
+All programs MUST begin with the declarative operator PROGRAM, taking START
+ as its argument, and end with PROGRAM STOP.
+ This is especially necessary because the VIOLET editor operates in plain
+ text and VIOLET code is not tokenized like other contemporary languages,
+ thus requiring a clear statement of initialization to distinguish a program
+ file from arbitrary text documents.
+\end_layout
+
+\begin_layout Standard
+Operators are always given in upper case, and will not be recognized otherwise.
+ Variables can be upper or lower case, however easier typing meant convention
+ tended to be to keep them upper case.
+ 
+\end_layout
+
+\begin_layout Section
+Variable Conventions
+\end_layout
+
+\begin_layout Standard
+Variables in VIOLET consist of three types, indicated by their preceding
+ symbol:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+#VAR (integer)
+\end_layout
+
+\begin_layout Plain Layout
+
+%VAR (float)
+\end_layout
+
+\begin_layout Plain Layout
+
+$VAR (string)
+\end_layout
+
+\begin_layout Plain Layout
+
+&VAR (dump, reserved for %LAST)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Integers and floats are numeric values.
+ An integer declaration will fail if a decimal point is found, and a float
+ will fail if no decimal point is found (declare whole number floats with
+ trailing 0 decimal, like 
+\emph on
+4.0
+\emph default
+).
+\end_layout
+
+\begin_layout Standard
+String values are sequences of ASCII characters enclosed in quotation marks.
+\end_layout
+
+\begin_layout Standard
+The "dump" variable is a special type, reserved solely for the &LAST value,
+ and may at any given time contain either a string or a number.
+ Care should thus be taken when calling &LAST to ensure it contains the
+ right value.
+\end_layout
+
+\begin_layout Standard
+Note also that unlike some languages, bare declarations of variables are
+ NOT allowed in VIOLET, and must always begin with the operator SET.
+ SET takes two arguments, a variable name, and an appropriate value to the
+ variable type.
+ SET will fail on a mismatch, or on attempt to assign a new dump or to &LAST.
+\end_layout
+
+\begin_layout Standard
+All variables are global, as VIOLET does not possess any form of scoping,
+ much like old-fashioned BASIC.
+\end_layout
+
+\begin_layout Section
+Flow Control
+\end_layout
+
+\begin_layout Standard
+VIOLET's flow control methods are fairly primitive, being limited largely
+ to the IF/IFY/IFN operator set, and a WHILE/WHEND loop, as well as the
+ usual GOTO statement found in many of these languages.
+ 
+\end_layout
+
+\begin_layout Subsection
+IF
+\end_layout
+
+\begin_layout Standard
+The IF operator takes a test, and evaluates it, returning 1 to &LAST if
+ the test is true, and 0 if the test is false.
+ The IF statement can then be followed with the IFY operator (which executes
+ the given operator and its arguments if &LAST is 1, returning 0 if not)
+ or the IFN operator (which executes the given operator and its arguments
+ if &LAST is 0, returning 1 if not).
+ Not that either statement can be skipped, and because they rely on &LAST,
+ they do not even especially require the presence of a preceding IF operator.
+\end_layout
+
+\begin_layout Standard
+The IF test syntax is simple, taking exactly three arguments:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+IF TESTOPERATOR first_value second_value
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The test operators are as follows:
+\end_layout
+
+\begin_layout Description
+EQUALS Tests if the two values are equal to each other.
+\end_layout
+
+\begin_layout Description
+NOTEQ Tests if the two values are equal to each other.
+\end_layout
+
+\begin_layout Description
+GREATER Returns true if 
+\emph on
+first_value
+\emph default
+ is greater than 
+\emph on
+second_value.
+\end_layout
+
+\begin_layout Description
+LESSER Returns true if 
+\emph on
+first_value 
+\emph default
+is less than 
+\emph on
+second_value.
+\end_layout
+
+\begin_layout Description
+AND Returns true if both values are greater than 0, or false if not.
+\end_layout
+
+\begin_layout Description
+OR Returns true if either value is greater than 0.
+\end_layout
+
+\begin_layout Standard
+A sample usage of IF looks like the following:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+IF EQUALS #VAR 45
+\end_layout
+
+\begin_layout Plain Layout
+
+IFY SET #VAR 0
+\end_layout
+
+\begin_layout Plain Layout
+
+IFN SET #VAR 100
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+WHILE
+\end_layout
+
+\begin_layout Standard
+The WHILE operator syntax is similar to the IF operator, but rather than
+ executing a different bit of code depending on the test, it instead continually
+ executes everything between the WHILE and WHEND operators while the test
+ remains true.
+ For example:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+SET #X 99
+\end_layout
+
+\begin_layout Plain Layout
+
+WHILE NOTEQ #X 0
+\end_layout
+
+\begin_layout Plain Layout
+
+PRINT #X "BOTTLES OF BEER ON THE WALL"
+\end_layout
+
+\begin_layout Plain Layout
+
+SUB #X 1
+\end_layout
+
+\begin_layout Plain Layout
+
+SET #X &LAST
+\end_layout
+
+\begin_layout Plain Layout
+
+WHEND
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+GOTO
+\end_layout
+
+\begin_layout Standard
+VIOLET contains the dreaded GOTO command, and its use is perhaps even more
+ problematic here than in other languages, as the line number of a given
+ line cannot be guaranteed.
+ GOTO 
+\emph on
+line 
+\emph default
+jumps the current execution pointer to 
+\emph on
+line, 
+\emph default
+where line is indexed from 0 based on the number of lines in the current
+ program.
+ Thus, if the program is edited and the number of lines changes, the old
+ GOTO command will now go god knows where in the program.
+ 
+\end_layout
+
+\begin_layout Section
+Operator Reference
+\end_layout
+
+\begin_layout Standard
+This section contains a list of the available VIOLET operators and their
+ syntax.
+ It is useful to note a convention here: operators are always given word
+ names rather than symbols (thus giving meaning to the 
+\begin_inset Quotes eld
+\end_inset
+
+Verbose
+\begin_inset Quotes erd
+\end_inset
+
+ portion of the acronym).
+ This was a requirement set by the Board of Education, who believed that
+ use of full word commands would be 'easier to understand.' Minutes of previous
+ meetings indicate that even allowing the type prefix on variables required
+ considerable argumentation.
+\end_layout
+
+\begin_layout Subsection
+Arithmetic
+\end_layout
+
+\begin_layout Description
+ADD
+\begin_inset space ~
+\end_inset
+
+
+\series medium
+\emph on
+*args
+\series default
+: 
+\emph default
+Adds the value list given and assigns it to &LAST.
+\end_layout
+
+\begin_layout Description
+SUB
+\emph on
+
+\begin_inset space ~
+\end_inset
+
+
+\series medium
+first_value
+\begin_inset space ~
+\end_inset
+
+second_value
+\series default
+: 
+\emph default
+Subtracts 
+\emph on
+second_value
+\emph default
+ from 
+\emph on
+first_value 
+\emph default
+and assigns it to &LAST.
+\end_layout
+
+\begin_layout Description
+MULT
+\begin_inset space ~
+\end_inset
+
+
+\series medium
+\emph on
+*args
+\series default
+: 
+\emph default
+Multiplies the value list given in order and assigns the total to &LAST.
+\end_layout
+
+\begin_layout Description
+DIV
+\emph on
+
+\begin_inset space ~
+\end_inset
+
+
+\series medium
+first_value
+\begin_inset space ~
+\end_inset
+
+second_value
+\series default
+: 
+\emph default
+Divides 
+\emph on
+first_value
+\emph default
+ by 
+\emph on
+second_value, 
+\emph default
+and assigns the result to &LAST.
+ Note that if both values are integers, it will return an integer result,
+ dropping the remainder.
+ If one value is a float, it will return a float.
+ 
+\emph on
+Be very careful therefore when assigning &LAST back to a variable!
+\end_layout
+
+\begin_layout Subsection
+Flow Control
+\end_layout
+
+\begin_layout Description
+IF
+\begin_inset space ~
+\end_inset
+
+
+\series medium
+\emph on
+test
+\begin_inset space ~
+\end_inset
+
+first_value
+\begin_inset space ~
+\end_inset
+
+second_value
+\series default
+: 
+\emph default
+Tests 
+\emph on
+first_value 
+\emph default
+against 
+\emph on
+second_value
+\emph default
+ using operator 
+\emph on
+test, 
+\emph default
+returning 1 to &LAST if true, or 0 if false.
+\end_layout
+
+\begin_layout Description
+IFY
+\emph on
+
+\begin_inset space ~
+\end_inset
+
+
+\series medium
+operator
+\begin_inset space ~
+\end_inset
+
+*args
+\series default
+: 
+\emph default
+If &LAST is 1, executes 
+\emph on
+operator
+\emph default
+ with its 
+\emph on
+args.
+
+\emph default
+ Otherwise, sets &LAST to 0.
+\end_layout
+
+\begin_layout Description
+IFN
+\series medium
+
+\begin_inset space ~
+\end_inset
+
+
+\emph on
+operator
+\begin_inset space ~
+\end_inset
+
+*args
+\series default
+:
+\emph default
+ If &LAST is 0, executes 
+\emph on
+operator
+\emph default
+ with its 
+\emph on
+args.
+
+\emph default
+ Otherwise, sets &LAST to 1.
+ 
+\end_layout
+
+\begin_layout Description
+WHILE
+\emph on
+
+\begin_inset space ~
+\end_inset
+
+
+\series medium
+test
+\begin_inset space ~
+\end_inset
+
+first_value
+\begin_inset space ~
+\end_inset
+
+second_value
+\series default
+:
+\emph default
+ Tests 
+\emph on
+first_value 
+\emph default
+against 
+\emph on
+second_value
+\emph default
+ using operator 
+\emph on
+test
+\emph default
+.
+ If the test is true, it stores the pointer and executes the next line of
+ code, if not, it seeks the WHEND operator and sets the pointer to the line
+ following it.
+\end_layout
+
+\begin_layout Description
+WHEND Sets the pointer to the value stored by WHILE.
+\end_layout
+
+\begin_layout Description
+GOTO
+\emph on
+
+\begin_inset space ~
+\end_inset
+
+
+\series medium
+line
+\series default
+: 
+\emph default
+Jumps the pointer to the 
+\emph on
+line
+\emph default
+ specified.
+\end_layout
+
+\begin_layout Subsection
+SET
+\end_layout
+
+\begin_layout Description
+SET
+\emph on
+
+\begin_inset space ~
+\end_inset
+
+
+\series medium
+name
+\begin_inset space ~
+\end_inset
+
+value
+\series default
+: 
+\emph default
+Sets the variable 
+\emph on
+name
+\emph default
+ to 
+\emph on
+value
+\emph default
+, creating 
+\emph on
+name 
+\emph default
+if it does not exist.
+ Name 
+\series bold
+must
+\series default
+ be preceded by one of the following symbols, designating its type, and
+ if the type and the value mismatch, the interpreter will produce an error
+ and exit.
+ SET returns 
+\emph on
+value
+\emph default
+ to &LAST.
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+#
+\emph on
+
+\begin_inset space ~
+\end_inset
+
+
+\series medium
+integer
+\series default
+: 
+\emph default
+A whole number value.
+ Will create a mismatch if a decimal point is found.
+\end_layout
+
+\begin_layout Description
+%
+\begin_inset space ~
+\end_inset
+
+
+\series medium
+\emph on
+float
+\series default
+: 
+\emph default
+A floating-point numeric value.
+ Will create a mismatch if no trailing decimal is found.
+ Create whole number values by trailing with 
+\emph on
+.0
+\emph default
+.
+\end_layout
+
+\begin_layout Description
+$
+\emph on
+
+\begin_inset space ~
+\end_inset
+
+
+\series medium
+string
+\series default
+: 
+\emph default
+A sequence of ASCII characters, which must be enclosed in quotation marks
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+Input/Output
+\end_layout
+
+\begin_layout Description
+PRINT
+\begin_inset space ~
+\end_inset
+
+
+\series medium
+\emph on
+*args
+\series default
+: 
+\emph default
+Prints each argument, seperated by spaces.
+ 
+\end_layout
+
+\begin_layout Description
+PROMPT
+\begin_inset space ~
+\end_inset
+
+
+\series medium
+\emph on
+type
+\begin_inset space ~
+\end_inset
+
+[prompt]
+\series default
+: 
+\emph default
+Accepts input from the terminal, returning an error if it does not match
+ type, and stores the result to &LAST.
+ The optional argument 
+\emph on
+prompt
+\emph default
+ takes a string which will replace the standard 
+\begin_inset Quotes eld
+\end_inset
+
+> 
+\begin_inset Quotes eld
+\end_inset
+
+ prompt.
+\end_layout
+
+\begin_layout Subsection
+Additional Operators
+\end_layout
+
+\begin_layout Description
+IGNORE
+\emph on
+
+\begin_inset space ~
+\end_inset
+
+
+\series medium
+*args
+\series default
+: 
+\emph default
+The IGNORE operator tells the interpreter to skip this line.
+ This can be used for code commenting, allowing arbitrary information to
+ follow it.
+\end_layout
+
+\end_body
+\end_document

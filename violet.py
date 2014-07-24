@@ -6,6 +6,7 @@ An interpreter for the CAI-1 "Blue Box" VIOLET programming language, powered by 
 
 import libbluebox as bluebox
 import os
+import runviolet
 
 
 def main_prompt():
@@ -138,7 +139,11 @@ def load_program(name):
 
 
 def run_program(program):
-    pass
+    # create a new instance of the interpreter
+    interpreter = runviolet.Interpreter(program, box)
+
+    # run the interpreter, taking back box's state
+    interpreter.run()
 
 
 ################################
