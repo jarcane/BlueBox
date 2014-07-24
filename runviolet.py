@@ -140,8 +140,9 @@ class Interpreter:
                 self.pointer = self.w_pointer - 1
             return 'SUCCESS', 1
         elif line[0] == 'GOTO':
-            if type(self.name_lookup(line[1])) != type('str'):
-                self.pointer = int(self.name_lookup(line[1]))
+            if not isinstance(self.name_lookup(line[1]), str):
+                self.pointer = int(self.name_lookup(line[1])) - 1
+            return 'SUCCESS', 1
         elif line[0] == 'SET':
             return self.set(line[1], line[2])
         elif line[0] == 'ADD':
@@ -259,7 +260,7 @@ class Interpreter:
 
     def name_lookup(self, x):
         # look up a given value in the names dict and return the value or the new value if in names
-        if type(x) != type('str'):
+        if not isinstance(x, str):
             return x
         if x[0] in ['#', '%', '$', '&']:
             if x in self.names.keys():
