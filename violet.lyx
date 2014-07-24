@@ -329,7 +329,9 @@ Integers and floats are numeric values.
 \end_layout
 
 \begin_layout Standard
-String values are sequences of ASCII characters enclosed in quotation marks.
+String values are sequences of characters.
+ Best declared with quotation marks, elsewise the parser will ignore past
+ the first word.
 \end_layout
 
 \begin_layout Standard
@@ -933,7 +935,9 @@ string
 \series default
 : 
 \emph default
-A sequence of ASCII characters, which must be enclosed in quotation marks
+A sequence of ASCII characters.
+ Unless enclosed in quotation marks, all but the first word delimited will
+ be ignored.
 \end_layout
 
 \end_deeper
@@ -953,8 +957,23 @@ PRINT
 \series default
 : 
 \emph default
-Prints each argument, seperated by spaces.
+Prints each argument, separated by spaces.
  
+\end_layout
+
+\begin_layout Description
+PRINTLINES
+\begin_inset space ~
+\end_inset
+
+
+\series medium
+\emph on
+*args
+\series default
+: 
+\emph default
+Prints each argument, each on a new line.
 \end_layout
 
 \begin_layout Description

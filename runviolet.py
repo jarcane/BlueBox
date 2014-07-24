@@ -20,7 +20,7 @@ class Interpreter:
 
         # establishing the operator lexicon
         self.lex = ['PROGRAM', 'IGNORE', 'IF', 'IFY', 'IFN', 'WHILE', 'WHEND', 'GOTO', 'SET', 'PRINT',
-                    'PROMPT', 'ADD', 'SUB', 'MULT', 'DIV']
+                    'PROMPT', 'PRINTLINES', 'ADD', 'SUB', 'MULT', 'DIV']
 
         # establishing text operator lexicon
         self.test_lex = {
@@ -90,6 +90,16 @@ class Interpreter:
             return line[1], 1
         elif line[0] == 'IF':
             return self.do_if(line[1], line[2], line[3])
+        elif line[0] == 'IFY':
+            if self.names['&LAST'] == 1:
+                return self.execute(line[1:])
+            else:
+                return 'SUCCESS', 0
+        elif line[0] == 'IFN':
+            if self.names['&LAST'] == 0:
+                return self.execute(line[1:])
+            else:
+                return 'SUCCESS', 1
         elif line[0] == 'SET':
             return self.set(line[1], line[2])
         elif line[0] == 'PRINT':
@@ -98,6 +108,11 @@ class Interpreter:
                 output += ' ' + str(self.name_lookup(i))
             self.box.text_out(output)
             return 'SUCCESS', 1
+        elif line[0] == 'PRINTLINES':
+            for i in line[1:]:
+                self.box.text_out(i)
+            return 'SUCCESS', 1
+
         # If execute has got this far, it's failed, so we let the run loop know it did
         return 'RUNTIME ERROR', 0
 
