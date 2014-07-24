@@ -185,7 +185,7 @@ $VAR (string)
 
 
 <div class="standard"><a id='magicparlabel-5795' />
-Integers and floats are numeric values. An integer declaration will fail if a decimal point is found, and a float will fail if no decimal point is found (declare whole number floats with trailing 0 decimal, like <em>4.0</em>).</div>
+Integers and floats are numeric values. An integer declaration will fail if a decimal point is found.</div>
 
 <div class="standard"><a id='magicparlabel-5796' />
 String values are sequences of ASCII characters enclosed in quotation marks.</div>
@@ -287,8 +287,11 @@ Arithmetic</h3>
 <h3 class="subsection"><span class="subsection_label">6.2</span> <a id='magicparlabel-7954' />
 Flow Control</h3>
 
-<dl class='description'><dt class="description_label">IF&nbsp;test&nbsp;first_value&nbsp;second_value:</dt>
+<dl class='description'><dt class="description_label">PROGRAM&nbsp;START|STOP:</dt>
 <dd class="description_item"><a id='magicparlabel-7960' />
+ Executes the following program if START, ends the program execution if STOP. The interpreter will refuse to execute if the first line of the program is not PROGRAM START, and the last line is not PROGRAM STOP.</dd>
+<dt class="description_label">IF&nbsp;test&nbsp;first_value&nbsp;second_value:</dt>
+<dd class="description_item"><a id='magicparlabel-10516' />
 <em> </em>Tests <em>first_value </em>against <em>second_value</em> using operator <em>test, </em>returning 1 to &amp;LAST if true, or 0 if false.</dd>
 <dt class="description_label">IFY&nbsp;operator&nbsp;*args:</dt>
 <dd class="description_item"><a id='magicparlabel-7978' />
@@ -314,13 +317,13 @@ SET</h3>
 <em> </em>Sets the variable <em>name</em> to <em>value</em>, creating <em>name </em>if it does not exist. Name <strong>must</strong> be preceded by one of the following symbols, designating its type, and if the type and the value mismatch, the interpreter will produce an error and exit. SET returns <em>value</em> to &amp;LAST.
 
 <dl class='description'><dt class="description_label">#&nbsp;integer:</dt>
-<dd class="description_item"><a id='magicparlabel-8341' />
-<em> </em>A whole number value. Will create a mismatch if a decimal point is found.</dd>
+<dd class="description_item"><a id='magicparlabel-10002' />
+<em> </em>A whole number value. Will create a type error if a decimal point is found.</dd>
 <dt class="description_label">%&nbsp;float:</dt>
-<dd class="description_item"><a id='magicparlabel-8370' />
-<em> </em>A floating-point numeric value. Will create a mismatch if no trailing decimal is found. Create whole number values by trailing with <em>.0</em>.</dd>
+<dd class="description_item"><a id='magicparlabel-10000' />
+<em> </em>A floating-point numeric value. </dd>
 <dt class="description_label">$&nbsp;string:</dt>
-<dd class="description_item"><a id='magicparlabel-8385' />
+<dd class="description_item"><a id='magicparlabel-9998' />
 <em> </em>A sequence of ASCII characters, which must be enclosed in quotation marks</dd>
 </dl>
 </dd></dl>

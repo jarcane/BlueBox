@@ -142,7 +142,7 @@ def run_program(program):
     # create a new instance of the interpreter
     interpreter = runviolet.Interpreter(program, box)
 
-    # run the interpreter, taking back box's state
+    # run the interpreter
     interpreter.run()
 
 

@@ -325,13 +325,7 @@ $VAR (string)
 
 \begin_layout Standard
 Integers and floats are numeric values.
- An integer declaration will fail if a decimal point is found, and a float
- will fail if no decimal point is found (declare whole number floats with
- trailing 0 decimal, like 
-\emph on
-4.0
-\emph default
-).
+ An integer declaration will fail if a decimal point is found.
 \end_layout
 
 \begin_layout Standard
@@ -671,6 +665,23 @@ Flow Control
 \end_layout
 
 \begin_layout Description
+PROGRAM
+\begin_inset space ~
+\end_inset
+
+
+\series medium
+\emph on
+START|STOP
+\series default
+\emph default
+: Executes the following program if START, ends the program execution if
+ STOP.
+ The interpreter will refuse to execute if the first line of the program
+ is not PROGRAM START, and the last line is not PROGRAM STOP.
+\end_layout
+
+\begin_layout Description
 IF
 \begin_inset space ~
 \end_inset
@@ -890,7 +901,7 @@ integer
 : 
 \emph default
 A whole number value.
- Will create a mismatch if a decimal point is found.
+ Will create a type error if a decimal point is found.
 \end_layout
 
 \begin_layout Description
@@ -906,12 +917,7 @@ float
 : 
 \emph default
 A floating-point numeric value.
- Will create a mismatch if no trailing decimal is found.
- Create whole number values by trailing with 
-\emph on
-.0
-\emph default
-.
+ 
 \end_layout
 
 \begin_layout Description
