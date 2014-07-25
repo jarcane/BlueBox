@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<meta name="generator" content="http://www.nongnu.org/elyxer/"/>
+<meta name="create-date" content="2014-07-25"/>
+<link rel="stylesheet" href="http://elyxer.nongnu.org/lyx.css" type="text/css" media="all"/>
+<title>The VIOLET Programming Language</title>
+</head>
+<body>
+<div id="globalWrapper">
+<h1 class="title">
+The VIOLET Programming Language
+</h1>
+<h2 class="Date">
+Last updated 07/24/14
+</h2>
+<h1 class="Section">
+<a class="toc" name="toc-Section-1">1</a> History
+</h1>
+<div class="Unindented">
+VIOLET was developed for the Buttech CAI-1 "Blue Box", and served as the default ROM for the CAI-1. Licensing a BASIC interpreter was too expensive for the project’s budget, and the programmer in charge of the requested PILOT implementation quit in protest, leaving a quickly promoted intern student from Butte County Community College with the task of quickly developing a suitable language. 
+</div>
+<div class="Indented">
+VIOLET (short for Verbose Interpreted Operating Language for Educational Terminals) was the result. A gross mish-mash of PILOT, BASIC, FORTH, and even LISP, VIOLET nonetheless remained in use in the Butte County school system well into the 1990s, and some have blamed the county’s poor turnout for quality software engineers directly on VIOLET’s continued use and influence on impressionable young minds.
+</div>
+<h1 class="Section">
+<a class="toc" name="toc-Section-2">2</a> The Editor
+</h1>
+<div class="Unindented">
+VIOLET does not follow a typical interactive REPL such as many other interpreted languages, but instead begins operation in its editor mode. This is a simple line editor, with support for file save and load. 
+</div>
+<div class="Indented">
+Its commands (or ’controls’ in VIOLET terminology) are listed below, with arguments in lowercase. All arguments for editor controls are mandatory.
+</div>
+<div class="Indented">
+Control of the VIOLET editor switches between two modes: control mode, and entry mode. In control mode, the prompt ’&gt; ’ appears, and controls may be entered. Some controls will begin entry mode (indicated with a *), in which the user will be instead prompted with numbered prompts, into which a new code line can be entered. Entry mode can be exited by entering an empty line. 
+</div>
+<h2 class="Subsection">
+<a class="toc" name="toc-Subsection-2.1">2.1</a> Editor Controls
+</h2>
+<div class="Description">
+<span class="Description-entry">BEGIN*:</span> Begins a new program and enters entry mode. 
+</div>
+<div class="Description">
+<span class="Description-entry">APPEND*:</span> Enters entry mode, adding new lines to the end of resident program in memory. Returns an error if no program is present.
+</div>
+<div class="Description">
+<span class="Description-entry">INSERT<i> line</i>*:</span> Enters entry mode, inserting new lines at the point designated with the line argument. Returns error if line is not a number, is not in the range of current program length, or there is no program resident in memory.
+</div>
+<div class="Description">
+<span class="Description-entry">DELETE <i>startline endline</i>:</span> Removes lines from the program from startline (inclusive) to endline (exclusive). Returns an error if arguments are not numbers, if they exceed range of current program length, or no program is in memory.
+</div>
+<div class="Description">
+<span class="Description-entry">LIST:</span> Lists the present program, preceded by line numbers. Returns an error if no program is resident.
+</div>
+<div class="Description">
+<span class="Description-entry">SAVE <i>filename</i>:</span> Saves the contents of the current program to a file called (filename)
+</div>
+<div class="Description">
+<span class="Description-entry">LOAD <i>filename</i>:</span> Loads the contents of a file called filename, or returns an error if it doesn’t exist.
+</div>
+<div class="Description">
+<span class="Description-entry">DIR:</span> Lists the contents of the working directory (note: this is not a 100% authentic handling, but has been implemented for usability’s sake.)
+</div>
+<div class="Description">
+<span class="Description-entry">RUN:</span> Sends the current program in memory to the interpreter and attempts to execute it.
+</div>
+<div class="Description">
+<span class="Description-entry">EXIT:</span> Exits the interpreter. (Note: On the original hardware this would quit to the built in monitor; here it just exits the program)
+</div>
+<h1 class="Section">
+<a class="toc" name="toc-Section-3">3</a> Basic Structure
+</h1>
+<div class="Unindented">
+Each line in a VIOLET program consists of an "operator", and its arguments. The operator must begin the line, and if the interpreter fails to find a valid operator, it will quit.
+</div>
+<div class="Indented">
+Every operator essentially acts as a function, and thus returns a value in addition to any other effects, which is stored in a built-in variable called &amp;LAST. This is used both internally to handle conditional statements, and can be called upon to apply the result of previous mathematical operations to a variable. For example: 
+</div>
+<div class="Indented">
+<div class="listing">
+<pre class="listing">ADD #X 45
+SET #X %LAST
+</pre>
+</div>
+
+</div>
+<div class="Indented">
+is a statement roughly equivalent to "x = x + 45" as might be found in other languages.
+</div>
+<div class="Indented">
+All programs MUST begin with the declarative operator PROGRAM, taking START as its argument, and end with PROGRAM STOP. This is especially necessary because the VIOLET editor operates in plain text and VIOLET code is not tokenized like other contemporary languages, thus requiring a clear statement of initialization to distinguish a program file from arbitrary text documents.
+</div>
+<div class="Indented">
+Operators are always given in upper case, and will not be recognized otherwise. Variables can be upper or lower case, however easier typing meant convention tended to be to keep them upper case. 
+</div>
+<h1 class="Section">
+<a class="toc" name="toc-Section-4">4</a> Variable Conventions
+</h1>
+<div class="Unindented">
+Variables in VIOLET consist of three types, indicated by their preceding symbol:
+</div>
+<div class="Indented">
+<div class="listing">
+<pre class="listing">#VAR (integer)
+%VAR (float)
+$VAR (string)
+&amp;VAR (dump, reserved for %LAST)
+</pre>
+</div>
+
+</div>
+<div class="Indented">
+Integers and floats are numeric values. An integer declaration will fail if a decimal point is found.
+</div>
+<div class="Indented">
+String values are sequences of characters. Best declared with quotation marks, elsewise the parser will ignore past the first word.
+</div>
+<div class="Indented">
+The "dump" variable is a special type, reserved solely for the &amp;LAST value, and may at any given time contain either a string or a number. Care should thus be taken when calling &amp;LAST to ensure it contains the right value.
+</div>
+<div class="Indented">
+Note also that unlike some languages, bare declarations of variables are NOT allowed in VIOLET, and must always begin with the operator SET. SET takes two arguments, a variable name, and an appropriate value to the variable type. SET will fail on a mismatch, or on attempt to assign a new dump or to &amp;LAST.
+</div>
+<div class="Indented">
+All variables are global, as VIOLET does not possess any form of scoping, much like old-fashioned BASIC.
+</div>
+<h1 class="Section">
+<a class="toc" name="toc-Section-5">5</a> Flow Control
+</h1>
+<div class="Unindented">
+VIOLET’s flow control methods are fairly primitive, being limited largely to the IF/IFY/IFN operator set, and a WHILE/WHEND loop, as well as the usual GOTO statement found in many of these languages. 
+</div>
+<h2 class="Subsection">
+<a class="toc" name="toc-Subsection-5.1">5.1</a> IF
+</h2>
+<div class="Unindented">
+The IF operator takes a test, and evaluates it, returning 1 to &amp;LAST if the test is true, and 0 if the test is false. The IF statement can then be followed with the IFY operator (which executes the given operator and its arguments if &amp;LAST is 1, returning 0 if not) or the IFN operator (which executes the given operator and its arguments if &amp;LAST is 0, returning 1 if not). Not that either statement can be skipped, and because they rely on &amp;LAST, they do not even especially require the presence of a preceding IF operator.
+</div>
+<div class="Indented">
+The IF test syntax is simple, taking exactly three arguments:
+</div>
+<div class="Indented">
+<div class="listing">
+<pre class="listing">IF TESTOPERATOR first_value second_value
+</pre>
+</div>
+
+</div>
+<div class="Indented">
+The test operators are as follows:
+</div>
+<div class="Description">
+<span class="Description-entry">EQUALS</span> Tests if the two values are equal to each other.
+</div>
+<div class="Description">
+<span class="Description-entry">NOTEQ</span> Tests if the two values are equal to each other.
+</div>
+<div class="Description">
+<span class="Description-entry">GREATER</span> Returns true if <i>first_value</i> is greater than <i>second_value.</i>
+</div>
+<div class="Description">
+<span class="Description-entry">LESSER</span> Returns true if <i>first_value </i>is less than <i>second_value.</i>
+</div>
+<div class="Description">
+<span class="Description-entry">AND</span> Returns true if both values are greater than 0, or false if not.
+</div>
+<div class="Description">
+<span class="Description-entry">OR</span> Returns true if either value is greater than 0.
+</div>
+<div class="Unindented">
+A sample usage of IF looks like the following:
+</div>
+<div class="Indented">
+<div class="listing">
+<pre class="listing">IF EQUALS #VAR 45
+IFY SET #VAR 0
+IFN SET #VAR 100
+</pre>
+</div>
+
+</div>
+<h2 class="Subsection">
+<a class="toc" name="toc-Subsection-5.2">5.2</a> WHILE
+</h2>
+<div class="Unindented">
+The WHILE operator syntax is similar to the IF operator, but rather than executing a different bit of code depending on the test, it instead continually executes everything between the WHILE and WHEND operators while the test remains true. For example:
+</div>
+<div class="Indented">
+<div class="listing">
+<pre class="listing">SET #X 99
+WHILE NOTEQ #X 0
+PRINT #X "BOTTLES OF BEER ON THE WALL"
+SUB #X 1
+SET #X &amp;LAST
+WHEND
+</pre>
+</div>
+
+</div>
+<h2 class="Subsection">
+<a class="toc" name="toc-Subsection-5.3">5.3</a> GOTO
+</h2>
+<div class="Unindented">
+VIOLET contains the dreaded GOTO command, and its use is perhaps even more problematic here than in other languages, as the line number of a given line cannot be guaranteed. GOTO <i>line </i>jumps the current execution pointer to <i>line, </i>where line is indexed from 0 based on the number of lines in the current program. Thus, if the program is edited and the number of lines changes, the old GOTO command will now go god knows where in the program. 
+</div>
+<h1 class="Section">
+<a class="toc" name="toc-Section-6">6</a> Operator Reference
+</h1>
+<div class="Unindented">
+This section contains a list of the available VIOLET operators and their syntax. It is useful to note a convention here: operators are always given word names rather than symbols (thus giving meaning to the &ldquo;Verbose&rdquo; portion of the acronym). This was a requirement set by the Board of Education, who believed that use of full word commands would be ’easier to understand.’ Minutes of previous meetings indicate that even allowing the type prefix on variables required considerable argumentation.
+</div>
+<h2 class="Subsection">
+<a class="toc" name="toc-Subsection-6.1">6.1</a> Arithmetic
+</h2>
+<div class="Unindented">
+Note that except for ADD, arithmetic operations only operate on numbers.
+</div>
+<div class="Description">
+<span class="Description-entry">ADD <i>*args:</i></span> <i></i>Totals the value list given and assigns it to &amp;LAST. If the list is strings, ADD concatenates the strings without any delimiter.
+</div>
+<div class="Description">
+<span class="Description-entry">SUB<i> first_value second_value:</i></span> <i></i>Subtracts <i>second_value</i> from <i>first_value </i>and assigns it to &amp;LAST.
+</div>
+<div class="Description">
+<span class="Description-entry">MULT <i>*args:</i></span> <i></i>Multiplies the value list given in order and assigns the total to &amp;LAST.
+</div>
+<div class="Description">
+<span class="Description-entry">DIV<i> first_value second_value:</i></span> <i></i>Divides <i>first_value</i> by <i>second_value, </i>and assigns the result to &amp;LAST. Note that if both values are integers, it will return an integer result, dropping the remainder. If both values are floats, it will return a float. <i>If dividing values of mixed type, the result will be an integer. Be very careful therefore when assigning &amp;LAST back to a variable!</i>
+</div>
+<h2 class="Subsection">
+<a class="toc" name="toc-Subsection-6.2">6.2</a> Flow Control
+</h2>
+<div class="Description">
+<span class="Description-entry">PROGRAM <i>START|STOP</i>:</span> Executes the following program if START, ends the program execution if STOP. The interpreter will refuse to execute if the first line of the program is not PROGRAM START, and the last line is not PROGRAM STOP.
+</div>
+<div class="Description">
+<span class="Description-entry">IF <i>test first_value second_value:</i></span> <i></i>Tests <i>first_value </i>against <i>second_value</i> using operator <i>test, </i>returning 1 to &amp;LAST if true, or 0 if false.
+</div>
+<div class="Description">
+<span class="Description-entry">IFY<i> operator *args:</i></span> <i></i>If &amp;LAST is 1, executes <i>operator</i> with its <i>args.</i> Otherwise, sets &amp;LAST to 0.
+</div>
+<div class="Description">
+<span class="Description-entry">IFN <i>operator *args:</i></span> If &amp;LAST is 0, executes <i>operator</i> with its <i>args.</i> Otherwise, sets &amp;LAST to 1. 
+</div>
+<div class="Description">
+<span class="Description-entry">WHILE<i> test first_value second_value:</i></span> Tests <i>first_value </i>against <i>second_value</i> using operator <i>test</i>. If the test is true, it stores the pointer and executes the next line of code, if not, it seeks the WHEND operator and sets the pointer to the line following it. Sets &amp;LAST to 1 if true, or to the number of lines skipped to 
+</div>
+<div class="Description">
+<span class="Description-entry">WHEND</span> Sets the pointer to the value stored by WHILE if such a value is present.
+</div>
+<div class="Description">
+<span class="Description-entry">GOTO<i> line:</i></span> <i></i>Jumps the pointer to the <i>line</i> specified.
+</div>
+<h3 class="Subsubsection">
+<a class="toc" name="toc-Subsubsection-6.2.1">6.2.1</a> Test Operators
+</h3>
+<div class="Unindented">
+Used by IF and WHILE.
+</div>
+<div class="Description">
+<span class="Description-entry">EQUALS</span> Tests if the two values are equal to each other.
+</div>
+<div class="Description">
+<span class="Description-entry">NOTEQ</span> Tests if the two values are equal to each other.
+</div>
+<div class="Description">
+<span class="Description-entry">GREATER</span> Returns true if <i>first_value</i> is greater than <i>second_value.</i>
+</div>
+<div class="Description">
+<span class="Description-entry">LESSER</span> Returns true if <i>first_value </i>is less than <i>second_value.</i>
+</div>
+<div class="Description">
+<span class="Description-entry">AND</span> Returns true if both values are greater than 0, or false if not.
+</div>
+<div class="Description">
+<span class="Description-entry">OR</span> Returns true if either value is greater than 0.
+</div>
+<h2 class="Subsection">
+<a class="toc" name="toc-Subsection-6.3">6.3</a> Variables
+</h2>
+<div class="Description">
+<span class="Description-entry">SET<i> name value:</i></span> <i></i>Sets the variable <i>name</i> to <i>value</i>, creating <i>name </i>if it does not exist. Name <b>must</b> be preceded by one of the following symbols, designating its type, and if the type and the value mismatch, the interpreter will produce an error and exit. SET returns <i>value</i> to &amp;LAST.
+</div>
+<ul>
+<li class="nested">
+<div class="Description">
+<span class="Description-entry">#<i> integer:</i></span> <i></i>A whole number value. Will create a type error if a decimal point is found.
+</div>
+<div class="Description">
+<span class="Description-entry">% <i>float:</i></span> <i></i>A floating-point numeric value. 
+</div>
+<div class="Description">
+<span class="Description-entry">$<i> string:</i></span> <i></i>A sequence of ASCII characters. Unless enclosed in quotation marks, whitespaces will delimit the string, causing SET to ignore all but the first word.
+</div>
+
+</li>
+
+</ul>
+<h2 class="Subsection">
+<a class="toc" name="toc-Subsection-6.4">6.4</a> Input/Output
+</h2>
+<div class="Description">
+<span class="Description-entry">PRINT <i>*args:</i></span> <i></i>Prints each argument, separated by spaces. 
+</div>
+<div class="Description">
+<span class="Description-entry">PRINTLINES <i>*args:</i></span> <i></i>Prints each argument, each on a new line.
+</div>
+<div class="Description">
+<span class="Description-entry">PROMPT <i>type [prompt]:</i></span> <i></i>Accepts input from the terminal, looping until user inputs data that matches <i>type</i>, and stores the result to &amp;LAST. The optional argument <i>prompt</i> takes a string which will replace the standard &ldquo;&gt; &ldquo; prompt.
+</div>
+<h2 class="Subsection">
+<a class="toc" name="toc-Subsection-6.5">6.5</a> Additional Operators
+</h2>
+<div class="Description">
+<span class="Description-entry">IGNORE<i> *args:</i></span> <i></i>The IGNORE operator tells the interpreter to skip this line. This can be used for code commenting, allowing arbitrary information to follow it.
+</div>
+
+<hr class="footer"/>
+<div class="footer" id="generated-by">
+Document generated by <a href="http://elyxer.nongnu.org/">eLyXer 1.2.5 (2013-03-10)</a> on <span class="create-date">2014-07-25T18:59:24.995000</span>
+</div>
+</div>
+</body>
+</html>
