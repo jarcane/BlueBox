@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<meta name="generator" content="http://www.nongnu.org/elyxer/"/>
+<meta name="create-date" content="2014-07-25"/>
+<link rel="stylesheet" href="http://elyxer.nongnu.org/lyx.css" type="text/css" media="all"/>
+<title>BlueBox Documentation</title>
+</head>
+<body>
+<div id="globalWrapper">
+<h1 class="title">
+BlueBox Documentation
+</h1>
+<h2 class="Date">
+last updated 7/25/2014
+</h2>
+<h1 class="Section">
+<a class="toc" name="toc-Section-1">1</a> Introduction
+</h1>
+<div class="Unindented">
+The BlueBox library is a Python module based on libtcod for writing applications that simulate the appearance and capabilities of the Buttech CAI-1 &ldquo;Blue Box,&rdquo; an educational computer developed in the 1980s. It provides a simple object-based interface to a text-and-graphics console, essentially aiming to provide a basic subset of standard I/O routines.
+</div>
+<h2 class="Subsection">
+<a class="toc" name="toc-Subsection-1.1">1.1</a> History
+</h2>
+<div class="Unindented">
+The &ldquo;Blue Box&rdquo; came about in the early 1980s under the request of the Butte County Board of Education to procure a low cost terminal or personal computer that could be installed in classrooms. After initial complaints from the board regarding the potential procurement cost involved in existing solutions, a proposal was floated to instead commission one from a local electronics manufacturer according to the logic that &ldquo;it can’t be that difficult, that Apple guy did it in his garage.&rdquo; (actual quote from the minutes)
+</div>
+<div class="Indented">
+After a very short bidding round (few electronics makers even existed in Butte County, and fewer still would accept the low maximum bid), the task fell to Buttech, a small maker of video display terminals. A range of demands were placed on the machine despite already being short on both budget and time before the development phase had even begun. Once started, project difficulties began almost immediately. Buttech refused to commit much manpower to the project, citing low cost. The council demanded a color terminal &ldquo;for art classes,&rdquo; but insisted it be cheaper than any terminal presently available. 
+</div>
+<div class="Indented">
+Endless debate raged over the choice of built-in interpreter, with a licensed BASIC rejected as &ldquo;too expensive&rdquo; by some and even an in-house version rejected because the board chairman insisted it was &ldquo;too complicated,&rdquo; vetoing it for a PILOT-based proposal. Eventually the programmer on the PILOT project was fired, and an intern hastily assembled VIOLET from the ashes of several competing prototypes and all of a day and a half reading a textbook on language implementation. Even after VIOLET was finished, many Buttech-developed applications were actually written and compiled in LISP or Forth.
+</div>
+<div class="Indented">
+Due to the development difficulties, manpower and budget shortages, and manufacturing issues, the Buttech CAI-1 didn’t actually make it to classrooms until 1987, by which point it was already utterly obsolete compared to contemporary hardware. Nevertheless, the &ldquo;Blue Box&rdquo; (nicknamed for its unusual case color and a fault that turned its 4-tone monochrome output a light shade of baby blue) continued in operation well into the early to mid 1990s in a number of Butte County schools owing to the exclusive contract the BoE had with Buttech (which was later the subject of a massive tax appropriations scandal that eventually led to most of the boxes being seized and destroyed).
+</div>
+<h1 class="Section">
+<a class="toc" name="toc-Section-2">2</a> Usage
+</h1>
+<h2 class="Subsection">
+<a class="toc" name="toc-Subsection-2.1">2.1</a> Initialization
+</h2>
+<div class="Unindented">
+To use BlueBox, one must first begin by importing libbluebox and creating an instance of the BlueBox object, which starts the interface and whose methods will provide interaction with said interface. This can be done simply enough (provided you want only the default, 40-column interface) just so:
+</div>
+<div class="Indented">
+<div class="listing">
+<pre class="listing">import libbluebox
+​
+box = libbluebox.BlueBox()
+</pre>
+</div>
+
+</div>
+<div class="Indented">
+However, there are a number of initialization options that can be used to change the parameters of BlueBox, which are listed as follows, with their defaults:
+</div>
+<div class="Description">
+<span class="Description-entry">win_name=’BlueBox’</span> A string which provides the name of the console window. 
+</div>
+<div class="Description">
+<span class="Description-entry">boot_msg=True</span> If True, the newly created console will begin operation by printing the original ROM boot message from the CAI-1. False will suppress this message.
+</div>
+<div class="Description">
+<span class="Description-entry">graphics_mode=False</span> When true, the box will boot into graphics mode, rather than text mode. Graphics mode provides a semigraphics screen with horizontal and vertical resolution equal to double the width and height of the text mode, and can be interacted with through the graphics methods described later in this documentation. Changing this at boot is not necessarily recommended, but either way it can be toggled during runtime.
+</div>
+<div class="Description">
+<span class="Description-entry">width=40</span> The number of characters wide the text mode screen will be. If set to &gt;=80, will use the half-width 80-column font. For authentic CAI-1 operation, this should only ever be 32, 40, or 80.
+</div>
+<div class="Description">
+<span class="Description-entry">height=24</span> The number of characters high the text mode screen will be. On an original &ldquo;Blue Box,&rdquo; this is only ever 24. 
+</div>
+<div class="Description">
+<span class="Description-entry">fps=24</span> The frame limit for the libtcod console rendering. 24fps seems to be a reasonable middle ground between usability and accuracy.
+</div>
+<div class="Description">
+<span class="Description-entry">foreground=color_on</span> The default foreground color for either text or graphics. Chosen from one of four pre-defined values (<tt>color_bold, color_on, color_half</tt>, or <tt>color_off</tt>) based on the original CAI-1 4-intensity mode, or can be assigned a libtcod color constant instead if using for some other purpose. See the libtcod documentation for details on other colors. 
+</div>
+<div class="Description">
+<span class="Description-entry">background=color_off</span> The default background color for either text or graphics. 
+</div>
+<div class="Unindented">
+In addition, the initialization routine also creates internal values and objects used by the main class methods, but could potentially be referenced externally (though messing with them is probably not the best idea).
+</div>
+<div class="Description">
+<span class="Description-entry">BlueBox.cursor</span> A simple object that contains the x, y, and character values for the Cursor. x and y should not be messed with, however if you wish to change the cursor, sending a new character in the form of a <tt>chr()</tt> or single-character string to self.cursor.char <i>should </i>be safe, but has not been tested.
+</div>
+<div class="Description">
+<span class="Description-entry">BlueBox.screen</span> A 2 dimensional list containing the current contents of the text display, referenceable with <tt>self.screen[x][y]</tt>. 
+</div>
+<div class="Description">
+<span class="Description-entry">BlueBox.img</span> This parameter contains the libtcod format image for the current graphics mode page. Passing anything to this value at startup is probably not recommended, as you will need to create it through the relevant libtcod image toolkit routines. At boot, if <tt>graphics_mode</tt> is set <tt>True</tt>, the <tt>__init__ </tt>method will create one anyhow. 
+</div>
+<h2 class="Subsection">
+<a class="toc" name="toc-Subsection-2.2">2.2</a> Methods
+</h2>
+<div class="Unindented">
+The following subsections will describe and document the usage of the various internal methods provided by the BlueBox class. 
+</div>
+<h3 class="Subsubsection">
+<a class="toc" name="toc-Subsubsection-2.2.1">2.2.1</a> BlueBox.change_resolution(target_width, target_height=24)
+</h3>
+<div class="Unindented">
+Changes the current number of rows and columns of the text display. Note that unlike defining these values at boot, changing the resolution during runtime currently does not change the font used in rendering. This appears to be a limitation of the libtcod library underlying BlueBox.
+</div>
+<h3 class="Subsubsection">
+<a class="toc" name="toc-Subsubsection-2.2.2">2.2.2</a> BlueBox.check_interrupt():
+</h3>
+<div class="Unindented">
+A static method that calls libtcod’s input routines to check for either an Escape key event or a window_close event, and returns True if one has occured. Sometimes finicky.
+</div>
+<h3 class="Subsubsection">
+<a class="toc" name="toc-Subsubsection-2.2.3">2.2.3</a> BlueBox.clear_graphics():
+</h3>
+<div class="Unindented">
+Clears the current graphics page by setting all pixels within <tt>BlueBox.img</tt> to <tt>BlueBox.foreground</tt>.
+</div>
+<h3 class="Subsubsection">
+<a class="toc" name="toc-Subsubsection-2.2.4">2.2.4</a> BlueBox.clear_screen():
+</h3>
+<div class="Unindented">
+Clears the entire screen buffer and graphics page both, and resets the cursor to 0,0.
+</div>
+<h3 class="Subsubsection">
+<a class="toc" name="toc-Subsubsection-2.2.5">2.2.5</a> BlueBox.display_screen():
+</h3>
+<div class="Unindented">
+Renders the current screen buffer and (if graphics mode is on) draws <tt>BlueBox.img.</tt> Generally not necessary when working in text mode (as most routines for dealing in text mode automatically call it), but useful when dealing with graphics for ensuring that changes to the graphics page are properly drawn when needed. 
+</div>
+<h3 class="Subsubsection">
+<a class="toc" name="toc-Subsubsection-2.2.6">2.2.6</a> BlueBox.draw_line(sx, sy, tx, ty, color=None)
+</h3>
+<div class="Unindented">
+Draws a line on the graphics page from point sx, sy to point tx, ty in the color designated. If color is left out, will set color to the current foreground color.
+</div>
+<h3 class="Subsubsection">
+<a class="toc" name="toc-Subsubsection-2.2.7">2.2.7</a> BlueBox.draw_point(x, y, color=None)
+</h3>
+<div class="Unindented">
+Draws a pixel on the graphics page at point x, y, in the color designated. If color is left out, will set color to current foreground.
+</div>
+<h3 class="Subsubsection">
+<a class="toc" name="toc-Subsubsection-2.2.8">2.2.8</a> BlueBox.set_graphics(flag=None)
+</h3>
+<div class="Unindented">
+If no flag is given, toggles the state of <tt>BlueBox.graphics_mode</tt>, otherwise, if set to <tt>True</tt> or <tt>False</tt>, sets it to those values.
+</div>
+<h3 class="Subsubsection">
+<a class="toc" name="toc-Subsubsection-2.2.9">2.2.9</a> BlueBox.text_out(text, newline=True)
+</h3>
+<div class="Unindented">
+Prints out the contents of string <tt>text</tt> to the console at the current cursor location. If <tt>newline=True</tt>, it ends by moving the cursor to the next line.
+</div>
+<h3 class="Subsubsection">
+<a class="toc" name="toc-Subsubsection-2.2.10">2.2.10</a> BlueBox.text_in(newline=False, prompt=False, prompt_text=’&gt; ’)
+</h3>
+<div class="Unindented">
+Takes input from the keyboard at the current cursor location. If<tt> newline=True</tt>, will move the cursor to a new line before taking input. If <tt>prompt=True</tt>, will print the contents of <tt>prompt_text</tt> to the cursor location before taking input. 
+</div>
+<h3 class="Subsubsection">
+<a class="toc" name="toc-Subsubsection-2.2.11">2.2.11</a> BlueBox.new_line()
+</h3>
+<div class="Unindented">
+Moves the cursor to a new line, and scrolls the text vertically if at the end of the screen. 
+</div>
+<h2 class="Subsection">
+<a class="toc" name="toc-Subsection-2.3">2.3</a> Colors
+</h2>
+<div class="Unindented">
+The libbluebox library also provides four color constants which can be referenced in order to easily access the standard pixel intensities of the CAI-1 terminal screen. They are:
+</div>
+<div class="Description">
+<span class="Description-entry">color_off</span> Pixel off, ie. black.
+</div>
+<div class="Description">
+<span class="Description-entry">color_half</span> Pixel half on, dark blue.
+</div>
+<div class="Description">
+<span class="Description-entry">color_on</span> Pixel on, light blue.
+</div>
+<div class="Description">
+<span class="Description-entry">color_bold</span> Pixel extra-bright, white-blue.
+</div>
+<div class="Unindented">
+Internally, these colors are actually defined as gradients between libtcod.black and libtcod.light_azure, at 0, 50%, 75%, and 100% respectively. 
+</div>
+<h1 class="Section">
+<a class="toc" name="toc-Section-3">3</a> Included Software
+</h1>
+<div class="Unindented">
+The BlueBox library repository also contains additional programs that make use of libbluebox.py. These are currently:
+</div>
+<div class="Description">
+<span class="Description-entry">violet.py</span> The interactive editor for the VIOLET programming language. Run this to use VIOLET in its original environment. Further documentation is provided with this library.
+</div>
+<div class="Description">
+<span class="Description-entry">runviolet.py</span> The actual interpreter for the VIOLET language. Currently this still requires a BlueBox object to operate, so is of limited utility without modification, but can be imported alongside libbluebox to provide access to one. Currently undocumented internally because the code is scary.
+</div>
+
+<hr class="footer"/>
+<div class="footer" id="generated-by">
+Document generated by <a href="http://elyxer.nongnu.org/">eLyXer 1.2.5 (2013-03-10)</a> on <span class="create-date">2014-07-25T22:16:20.711000</span>
+</div>
+</div>
+</body>
+</html>
