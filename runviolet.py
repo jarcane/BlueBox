@@ -116,30 +116,39 @@ class Interpreter:
             return self.do_if(line[1], line[2], line[3])
         elif line[0] == 'IFY':
             if self.names['&LAST'] == 1:
-                return self.execute(line[1:])
+                self.execute(line[1:])
+                return 'SUCCESS', 1
             else:
                 return 'SUCCESS', 0
         elif line[0] == 'IFN':
             if self.names['&LAST'] == 0:
-                return self.execute(line[1:])
+                self.execute(line[1:])
+                return 'SUCCESS', 0
             else:
                 return 'SUCCESS', 1
         elif line[0] == 'WHILE':
-            print self.w_pointer
-            if self.test(line[1], self.name_lookup(line[2]), self.name_lookup(line[3])):
+            test = self.test(line[1], self.name_lookup(line[2]), self.name_lookup(line[3]))
+            if test:
                 self.w_pointer.append(self.pointer)
                 return 'SUCCESS', 1
-            else:
+            elif not test:
                 count = 0
+                inners = 0
                 for i in self.program[self.pointer:]:
-                    if i == 'WHEND':
-                        self.pointer += count
-                        break
+                    print i
+                    if 'WHEND' in i:
+                        if inners <= 1:
+                            self.pointer += count
+                            break
+                        else:
+                            inners -= 1
+                    elif 'WHILE' in i:
+                        inners += 1
                     count += 1
-                return 'SUCCESS', count
+                    # print inners
+                return 'SUCCESS', 0
         elif line[0] == 'WHEND':
-            print self.w_pointer
-            if len(self.w_pointer) is not 0:
+            if len(self.w_pointer) != 0:
                 self.pointer = self.w_pointer.pop() - 1
             return 'SUCCESS', 1
         elif line[0] == 'GOTO':
@@ -284,6 +293,9 @@ class Interpreter:
                 data = self.box.text_in(prompt=True)
             else:
                 data = self.box.text_in(prompt=True, prompt_text=prompt)
+
+            if data == '' and self.box.check_interrupt():
+                return 'BREAK', 0
 
             if data_type == '#':
                 try:
