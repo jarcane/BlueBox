@@ -21,6 +21,10 @@ runviolet.py is the interpreter runtime that violet.py calls to execute VIOLET p
 
 Additional documentation for the VIOLET language is available in LyX, PDF, and xHTML formats. 
 
+### Documentation
+
+The current specification for VIOLET can be found here: http://jarcane.github.io/BlueBox/violet.html
+
 ### Licensing
 
 All code except where otherwise indicated is released under the GPL v3.
