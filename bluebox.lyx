@@ -1,0 +1,576 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+BlueBox Documentation
+\end_layout
+
+\begin_layout Date
+last updated 7/25/2014
+\end_layout
+
+\begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Standard
+The BlueBox library is a Python module based on libtcod for writing applications
+ that simulate the appearance and capabilities of the Buttech CAI-1 
+\begin_inset Quotes eld
+\end_inset
+
+Blue Box,
+\begin_inset Quotes erd
+\end_inset
+
+ an educational computer developed in the 1980s.
+ It provides a simple object-based interface to a text-and-graphics console,
+ essentially aiming to provide a basic subset of standard I/O routines.
+\end_layout
+
+\begin_layout Subsection
+History
+\end_layout
+
+\begin_layout Standard
+The 
+\begin_inset Quotes eld
+\end_inset
+
+Blue Box
+\begin_inset Quotes erd
+\end_inset
+
+ came about in the early 1980s under the request of the Butte County Board
+ of Education to procure a low cost terminal or personal computer that could
+ be installed in classrooms.
+ After initial complaints from the board regarding the potential procurement
+ cost involved in existing solutions, a proposal was floated to instead
+ commission one from a local electronics manufacturer according to the logic
+ that 
+\begin_inset Quotes eld
+\end_inset
+
+it can't be that difficult, that Apple guy did it in his garage.
+\begin_inset Quotes erd
+\end_inset
+
+ (actual quote from the minutes)
+\end_layout
+
+\begin_layout Standard
+After a very short bidding round (few electronics makers even existed in
+ Butte County, and fewer still would accept the low maximum bid), the task
+ fell to Buttech, a small maker of video display terminals.
+ A range of demands were placed on the machine despite already being short
+ on both budget and time before the development phase had even begun.
+ Once started, project difficulties began almost immediately.
+ Buttech refused to commit much manpower to the project, citing low cost.
+ The council demanded a color terminal 
+\begin_inset Quotes eld
+\end_inset
+
+for art classes,
+\begin_inset Quotes erd
+\end_inset
+
+ but insisted it be cheaper than any terminal presently available.
+ 
+\end_layout
+
+\begin_layout Standard
+Endless debate raged over the choice of built-in interpreter, with a licensed
+ BASIC rejected as 
+\begin_inset Quotes eld
+\end_inset
+
+too expensive
+\begin_inset Quotes erd
+\end_inset
+
+ by some and even an in-house version rejected because the board chairman
+ insisted it was 
+\begin_inset Quotes eld
+\end_inset
+
+too complicated,
+\begin_inset Quotes erd
+\end_inset
+
+ vetoing it for a PILOT-based proposal.
+ Eventually the programmer on the PILOT project was fired, and an intern
+ hastily assembled VIOLET from the ashes of several competing prototypes
+ and all of a day and a half reading a textbook on language implementation.
+ Even after VIOLET was finished, many Buttech-developed applications were
+ actually written and compiled in LISP or Forth.
+\end_layout
+
+\begin_layout Standard
+Due to the development difficulties, manpower and budget shortages, and
+ manufacturing issues, the Buttech CAI-1 didn't actually make it to classrooms
+ until 1987, by which point it was already utterly obsolete compared to
+ contemporary hardware.
+ Nevertheless, the 
+\begin_inset Quotes eld
+\end_inset
+
+Blue Box
+\begin_inset Quotes erd
+\end_inset
+
+ (nicknamed for its unusual case color and a fault that turned its 4-tone
+ monochrome output a light shade of baby blue) continued in operation well
+ into the early to mid 1990s in a number of Butte County schools owing to
+ the exclusive contract the BoE had with Buttech (which was later the subject
+ of a massive tax appropriations scandal that eventually led to most of
+ the boxes being seized and destroyed).
+\end_layout
+
+\begin_layout Section
+Usage
+\end_layout
+
+\begin_layout Subsection
+Initialization
+\end_layout
+
+\begin_layout Standard
+To use BlueBox, one must first begin by importing libbluebox and creating
+ an instance of the BlueBox object, which starts the interface and whose
+ methods will provide interaction with said interface.
+ This can be done simply enough (provided you want only the default, 40-column
+ interface) just so:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+import libbluebox
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+box = libbluebox.BlueBox()
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+However, there are a number of initialization options that can be used to
+ change the parameters of BlueBox, which are listed as follows, with their
+ defaults:
+\end_layout
+
+\begin_layout Description
+win_name='BlueBox' A string which provides the name of the console window.
+ 
+\end_layout
+
+\begin_layout Description
+boot_msg=True If True, the newly created console will begin operation by
+ printing the original ROM boot message from the CAI-1.
+ False will suppress this message.
+\end_layout
+
+\begin_layout Description
+graphics_mode=False When true, the box will boot into graphics mode, rather
+ than text mode.
+ Graphics mode provides a semigraphics screen with horizontal and vertical
+ resolution equal to double the width and height of the text mode, and can
+ be interacted with through the graphics methods described later in this
+ documentation.
+ Changing this at boot is not necessarily recommended, but either way it
+ can be toggled during runtime.
+\end_layout
+
+\begin_layout Description
+width=40 The number of characters wide the text mode screen will be.
+ If set to >=80, will use the half-width 80-column font.
+ For authentic CAI-1 operation, this should only ever be 32, 40, or 80.
+\end_layout
+
+\begin_layout Description
+height=24 The number of characters high the text mode screen will be.
+ On an original 
+\begin_inset Quotes eld
+\end_inset
+
+Blue Box,
+\begin_inset Quotes erd
+\end_inset
+
+ this is only ever 24.
+ 
+\end_layout
+
+\begin_layout Description
+fps=24 The frame limit for the libtcod console rendering.
+ 24fps seems to be a reasonable middle ground between usability and accuracy.
+\end_layout
+
+\begin_layout Description
+foreground=color_on The default foreground color for either text or graphics.
+ Chosen from one of four pre-defined values (
+\family typewriter
+color_bold, color_on, color_half
+\family default
+, or 
+\family typewriter
+color_off
+\family default
+) based on the original CAI-1 4-intensity mode, or can be assigned a libtcod
+ color constant instead if using for some other purpose.
+ See the libtcod documentation for details on other colors.
+ 
+\end_layout
+
+\begin_layout Description
+background=color_off The default background color for either text or graphics.
+ 
+\end_layout
+
+\begin_layout Standard
+In addition, the initialization routine also creates internal values and
+ objects used by the main class methods, but could potentially be referenced
+ externally (though messing with them is probably not the best idea).
+\end_layout
+
+\begin_layout Description
+BlueBox.cursor A simple object that contains the x, y, and character values
+ for the Cursor.
+ x and y should not be messed with, however if you wish to change the cursor,
+ sending a new character in the form of a 
+\family typewriter
+chr()
+\family default
+ or single-character string to self.cursor.char 
+\emph on
+should 
+\emph default
+be safe, but has not been tested.
+\end_layout
+
+\begin_layout Description
+BlueBox.screen A 2 dimensional list containing the current contents of the
+ text display, referenceable with 
+\family typewriter
+self.screen[x][y]
+\family default
+.
+ 
+\end_layout
+
+\begin_layout Description
+BlueBox.img This parameter contains the libtcod format image for the current
+ graphics mode page.
+ Passing anything to this value at startup is probably not recommended,
+ as you will need to create it through the relevant libtcod image toolkit
+ routines.
+ At boot, if 
+\family typewriter
+graphics_mode
+\family default
+ is set 
+\family typewriter
+True
+\family default
+, the 
+\family typewriter
+__init__ 
+\family default
+method will create one anyhow.
+ 
+\end_layout
+
+\begin_layout Subsection
+Methods
+\end_layout
+
+\begin_layout Standard
+The following subsections will describe and document the usage of the various
+ internal methods provided by the BlueBox class.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+BlueBox.change_resolution(target_width, target_height=24)
+\end_layout
+
+\begin_layout Standard
+Changes the current number of rows and columns of the text display.
+ Note that unlike defining these values at boot, changing the resolution
+ during runtime currently does not change the font used in rendering.
+ This appears to be a limitation of the libtcod library underlying BlueBox.
+\end_layout
+
+\begin_layout Subsubsection
+BlueBox.check_interrupt():
+\end_layout
+
+\begin_layout Standard
+A static method that calls libtcod's input routines to check for either
+ an Escape key event or a window_close event, and returns True if one has
+ occured.
+ Sometimes finicky.
+\end_layout
+
+\begin_layout Subsubsection
+BlueBox.clear_graphics():
+\end_layout
+
+\begin_layout Standard
+Clears the current graphics page by setting all pixels within 
+\family typewriter
+BlueBox.img
+\family default
+ to 
+\family typewriter
+BlueBox.foreground
+\family default
+.
+\end_layout
+
+\begin_layout Subsubsection
+BlueBox.clear_screen():
+\end_layout
+
+\begin_layout Standard
+Clears the entire screen buffer and graphics page both, and resets the cursor
+ to 0,0.
+\end_layout
+
+\begin_layout Subsubsection
+BlueBox.display_screen():
+\end_layout
+
+\begin_layout Standard
+Renders the current screen buffer and (if graphics mode is on) draws 
+\family typewriter
+BlueBox.img.
+
+\family default
+ Generally not necessary when working in text mode (as most routines for
+ dealing in text mode automatically call it), but useful when dealing with
+ graphics for ensuring that changes to the graphics page are properly drawn
+ when needed.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+BlueBox.draw_line(sx, sy, tx, ty, color=None)
+\end_layout
+
+\begin_layout Standard
+Draws a line on the graphics page from point sx, sy to point tx, ty in the
+ color designated.
+ If color is left out, will set color to the current foreground color.
+\end_layout
+
+\begin_layout Subsubsection
+BlueBox.draw_point(x, y, color=None)
+\end_layout
+
+\begin_layout Standard
+Draws a pixel on the graphics page at point x, y, in the color designated.
+ If color is left out, will set color to current foreground.
+\end_layout
+
+\begin_layout Subsubsection
+BlueBox.set_graphics(flag=None)
+\end_layout
+
+\begin_layout Standard
+If no flag is given, toggles the state of 
+\family typewriter
+BlueBox.graphics_mode
+\family default
+, otherwise, if set to 
+\family typewriter
+True
+\family default
+ or 
+\family typewriter
+False
+\family default
+, sets it to those values.
+\end_layout
+
+\begin_layout Subsubsection
+BlueBox.text_out(text, newline=True)
+\end_layout
+
+\begin_layout Standard
+Prints out the contents of string 
+\family typewriter
+text
+\family default
+ to the console at the current cursor location.
+ If 
+\family typewriter
+newline=True
+\family default
+, it ends by moving the cursor to the next line.
+\end_layout
+
+\begin_layout Subsubsection
+BlueBox.text_in(newline=False, prompt=False, prompt_text='> ')
+\end_layout
+
+\begin_layout Standard
+Takes input from the keyboard at the current cursor location.
+ If
+\family typewriter
+ newline=True
+\family default
+, will move the cursor to a new line before taking input.
+ If 
+\family typewriter
+prompt=True
+\family default
+, will print the contents of 
+\family typewriter
+prompt_text
+\family default
+ to the cursor location before taking input.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+BlueBox.new_line()
+\end_layout
+
+\begin_layout Standard
+Moves the cursor to a new line, and scrolls the text vertically if at the
+ end of the screen.
+ 
+\end_layout
+
+\begin_layout Subsection
+Colors
+\end_layout
+
+\begin_layout Standard
+The libbluebox library also provides four color constants which can be reference
+d in order to easily access the standard pixel intensities of the CAI-1
+ terminal screen.
+ They are:
+\end_layout
+
+\begin_layout Description
+color_off Pixel off, ie.
+ black.
+\end_layout
+
+\begin_layout Description
+color_half Pixel half on, dark blue.
+\end_layout
+
+\begin_layout Description
+color_on Pixel on, light blue.
+\end_layout
+
+\begin_layout Description
+color_bold Pixel extra-bright, white-blue.
+\end_layout
+
+\begin_layout Standard
+Internally, these colors are actually defined as gradients between libtcod.black
+ and libtcod.light_azure, at 0, 50%, 75%, and 100% respectively.
+ 
+\end_layout
+
+\begin_layout Section
+Included Software
+\end_layout
+
+\begin_layout Standard
+The BlueBox library repository also contains additional programs that make
+ use of libbluebox.py.
+ These are currently:
+\end_layout
+
+\begin_layout Description
+violet.py The interactive editor for the VIOLET programming language.
+ Run this to use VIOLET in its original environment.
+ Further documentation is provided with this library.
+\end_layout
+
+\begin_layout Description
+runviolet.py The actual interpreter for the VIOLET language.
+ Currently this still requires a BlueBox object to operate, so is of limited
+ utility without modification, but can be imported alongside libbluebox
+ to provide access to one.
+ Currently undocumented internally because the code is scary.
+\end_layout
+
+\end_body
+\end_document
