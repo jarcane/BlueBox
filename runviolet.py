@@ -7,13 +7,13 @@ import shlex
 
 
 class Interpreter:
-    def __init__(self, program, box, pointer=0, w_pointer=None, running=False):
+    def __init__(self, program, box, pointer=0, running=False):
         self.program = program
         self.box = box
 
         # initialize the pointer and stored pointer used by WHILE
         self.pointer = pointer
-        self.w_pointer = w_pointer
+        self.w_pointer = []
 
         # set the 'running' flag, which is used by self.run to know if it should keep executing.
         self.running = running
@@ -125,21 +125,22 @@ class Interpreter:
             else:
                 return 'SUCCESS', 1
         elif line[0] == 'WHILE':
+            print self.w_pointer
             if self.test(line[1], self.name_lookup(line[2]), self.name_lookup(line[3])):
-                self.w_pointer = self.pointer
+                self.w_pointer.append(self.pointer)
                 return 'SUCCESS', 1
             else:
                 count = 0
                 for i in self.program[self.pointer:]:
                     if i == 'WHEND':
-                        self.w_pointer = None
                         self.pointer += count
                         break
                     count += 1
                 return 'SUCCESS', count
         elif line[0] == 'WHEND':
-            if self.w_pointer is not None:
-                self.pointer = self.w_pointer - 1
+            print self.w_pointer
+            if len(self.w_pointer) is not 0:
+                self.pointer = self.w_pointer.pop() - 1
             return 'SUCCESS', 1
         elif line[0] == 'GOTO':
             if not isinstance(self.name_lookup(line[1]), str):
