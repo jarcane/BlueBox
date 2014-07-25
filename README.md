@@ -23,7 +23,9 @@ Additional documentation for the VIOLET language is available in LyX, PDF, and x
 
 ### Documentation
 
-The current specification for VIOLET can be found here: http://jarcane.github.io/BlueBox/violet.html
+The BlueBox guide is here: http://jarcane.github.io/BlueBox/bluebox.html
+
+The current spec/guide for VIOLET can be found here: http://jarcane.github.io/BlueBox/violet.html
 
 ### Licensing
 
