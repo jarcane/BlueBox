@@ -19,13 +19,15 @@ violet.py is the VIOLET interactive editor.
 
 runviolet.py is the interpreter runtime that violet.py calls to execute VIOLET programs. 
 
-Additional documentation for the VIOLET language is available in LyX, PDF, and xHTML formats. 
+Additional documentation for BlueBox and for the VIOLET language is available in LyX, PDF, and HTML formats. 
 
 ### Documentation
 
 The BlueBox guide is here: http://jarcane.github.io/BlueBox/bluebox.html
 
 The current spec/guide for VIOLET can be found here: http://jarcane.github.io/BlueBox/violet.html
+
+Additional documentation for BlueBox and for the VIOLET language is also provided in the repo in LyX, PDF, and HTML formats. 
 
 ### Licensing
 
