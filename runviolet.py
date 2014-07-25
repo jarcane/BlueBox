@@ -57,7 +57,7 @@ class Interpreter:
                 return
 
         # Main execution loop
-        while self.running:
+        while self.running and not self.box.check_interrupt():
             # check the pointer to make sure some errant GOTO hasn't left the program space
             if self.pointer > len(self.program):
                 self.box.text_out('ERROR - POINTER HAS LEFT THE PROGRAM')
@@ -77,6 +77,8 @@ class Interpreter:
             else:
                 self.box.text_out(evaluate[0] + ' IN LINE ' + str(self.pointer))
                 self.running = False
+
+        self.box.text_out('PROGRAM STOP AT LINE ' + str(self.pointer))
 
         return
 

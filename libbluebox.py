@@ -21,7 +21,7 @@ color_bold = libtcod.color_lerp(off_color, on_color, 1.0)
 class BlueBox:
     # the BlueBox instance object
     def __init__(self, win_name='BlueBox', boot_msg=True, graphics_mode=False, img=None,
-                 width=40, height=24, fps=48, foreground=color_on, background=color_off):
+                 width=40, height=24, fps=24, foreground=color_on, background=color_off):
         # declare initial graphics colors and resolution (40 or 80 column modes)
         self.win_name = win_name
         self.boot_msg = boot_msg
@@ -151,15 +151,15 @@ class BlueBox:
             # update screen at cursor to portion of i
             self.screen[self.cursor.x][self.cursor.y] = i
 
-            # call display_screen to display the new results
-            self.display_screen()
-
             # increment the x position of the cursor in preparation for the next character.
             self.cursor.x += 1
 
         # end by starting a new line if newline is True
         if newline is True:
             self.new_line()
+
+        # call display_screen to display the new results
+        self.display_screen()
 
     def text_in(self, newline=False, prompt=False, prompt_text='> '):
         # takes input from the console, displaying as the user types.
@@ -264,6 +264,15 @@ class BlueBox:
                 self.screen[x].append(' ')
             self.cursor.y -= 1
 
+    @staticmethod
+    def check_interrupt():
+        # check the keyboard and window manager for an interrupt
+        # if check_interrupt sees a key event for ESC returns True
+        key = libtcod.console_check_for_keypress()
+        if key.vk == libtcod.KEY_ESCAPE or libtcod.console_is_window_closed():
+            return True
+        else:
+            return False
 
 class Cursor:
     # a simple class for packaging the cursor parameters

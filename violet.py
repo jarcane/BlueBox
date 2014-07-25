@@ -19,6 +19,8 @@ def main_prompt():
         input_control = input_control.split()
         if not input_control:
             box.text_out('EMPTY')
+            if box.check_interrupt():
+                return
         elif input_control[0] in controls:
             if input_control[0] == 'BEGIN':
                 program = entry_mode()
@@ -49,6 +51,8 @@ def main_prompt():
                 try:
                     for i in range(len(program)):
                         box.text_out(str(i) + '. ' + program[i])
+                        if box.check_interrupt():
+                            break
                 except UnboundLocalError:
                     box.text_out('NO PROGRAM IN MEMORY')
             elif input_control[0] == 'SAVE':
