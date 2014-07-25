@@ -1,5 +1,5 @@
 BlueBox
---------------
+-------
 
 BlueBox is a simple graphics library powered by libtcod for simulating the appearance and interface of the Buttech "Blue Box", an educational computer custom developed for the Butte County Board of Education in the 1980s.
 
@@ -11,7 +11,7 @@ BlueBox is not a true emulator or virtual machine. The Blue Box's hardware was n
 
 Sample Python applications that make use of the BlueBox library will be provided, including reconstructions of some common tools such as the built-in VIOLET programming language as well as other available software.
 
-===Contents
+### Contents
 
 libbluebox.py contains the BlueBox object.
 
@@ -21,7 +21,7 @@ runviolet.py is the interpreter runtime that violet.py calls to execute VIOLET p
 
 Additional documentation for the VIOLET language is available in LyX, PDF, and xHTML formats. 
 
-===Licensing
+### Licensing
 
 All code except where otherwise indicated is released under the GPL v3.
 
