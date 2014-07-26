@@ -165,7 +165,10 @@ class Interpreter:
             return 'SUCCESS', 1
         elif line[0] == 'GOTO':
             if not isinstance(self.name_lookup(line[1]), str):
-                self.pointer = int(self.name_lookup(line[1])) - 1
+                if self.name_lookup(line[1]) is not None:
+                    self.pointer = int(self.name_lookup(line[1])) - 1
+                else:
+                    return 'REFERENCE ERROR', 0
             return 'SUCCESS', 1
         elif line[0] == 'SET':
             return self.set(line[1], line[2])
