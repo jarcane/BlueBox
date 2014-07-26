@@ -149,7 +149,6 @@ class Interpreter:
                 count = 0
                 inners = 0
                 for i in self.program[self.pointer:]:
-                    print i
                     if 'WHEND' in i:
                         if inners <= 1:
                             self.pointer += count
@@ -159,7 +158,6 @@ class Interpreter:
                     elif 'WHILE' in i:
                         inners += 1
                     count += 1
-                    # print inners
                 return 'SUCCESS', 0
         elif line[0] == 'WHEND':
             if len(self.w_pointer) != 0:
