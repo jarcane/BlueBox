@@ -173,7 +173,8 @@ class Interpreter:
             return self.set(line[1], line[2])
         elif line[0] == 'ADD':
             for i in range(len(line[1:])):
-                line[i] = self.name_lookup(line[i])
+                index = i + 1
+                line[index] = self.name_lookup(line[index])
             try:
                 total = sum(line[1:])
             except TypeError:
